@@ -16,3 +16,5 @@ local.properties
 .gradle-user-home
 .kotlin
 app/build
+keystore.properties
+signing/
