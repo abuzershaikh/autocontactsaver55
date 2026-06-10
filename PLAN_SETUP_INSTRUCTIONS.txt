@@ -1,0 +1,146 @@
+═══════════════════════════════════════════════════════════════════
+            IN-APP PURCHASE PLAN SETUP INSTRUCTIONS
+═══════════════════════════════════════════════════════════════════
+
+📱 PLAN DETAILS:
+────────────────
+1. Monthly Plan   - ₹199  (30 days)
+2. Yearly Plan    - ₹999  (365 days) - BEST VALUE
+3. Lifetime Plan  - ₹1999 (Lifetime) - MOST POPULAR
+
+
+📋 PRODUCT IDs FOR PLAY CONSOLE:
+─────────────────────────────────
+Copy exactly as shown below:
+
+1. monthly_plan_199
+2. yearly_plan_999
+3. lifetime_plan_1999
+
+
+🎯 HOW TO ADD IN PLAY CONSOLE:
+───────────────────────────────
+
+STEP 1: Login to Play Console
+→ Go to: https://play.google.com/console
+→ Select your app: "Auto Contacts Saver"
+
+STEP 2: Navigate to In-app Products
+→ Left sidebar: Monetize → In-app products
+→ Click: "Create product" button
+
+STEP 3: Add Each Product
+────────────────────────────────
+
+MONTHLY PLAN:
+Product ID: monthly_plan_199
+Name: Monthly Premium Plan
+Description: Get premium features for 30 days
+Default Price: ₹199.00
+Status: Active
+
+YEARLY PLAN:
+Product ID: yearly_plan_999
+Name: Yearly Premium Plan
+Description: Get premium features for 1 year - Best Value
+Default Price: ₹999.00
+Status: Active
+
+LIFETIME PLAN:
+Product ID: lifetime_plan_1999
+Name: Lifetime Premium Plan
+Description: Get lifetime access to all premium features
+Default Price: ₹1999.00
+Status: Active
+
+STEP 4: Activate Products
+→ Make sure all products are set to "Active"
+→ Save changes
+→ Wait 2-3 hours for products to be available
+
+
+✅ CODE INTEGRATION COMPLETED:
+────────────────────────────────
+✓ PlanActivity created with beautiful UI
+✓ BillingManager handles all purchase logic
+✓ MainActivity header plan icon connected to PlanActivity
+✓ SubscriptionHelper for checking premium status
+✓ All billing dependencies already added
+✓ AndroidManifest updated with PlanActivity
+
+
+🚀 HOW TO USE:
+──────────────
+1. User clicks on "Plan" icon in MainActivity header
+2. PlanActivity opens showing all 3 plans
+3. User selects a plan and clicks "Purchase" button
+4. Google Play billing flow starts
+5. After successful purchase, premium features unlock
+
+
+💡 TESTING:
+───────────
+For testing before release:
+1. Go to Play Console → Setup → License testing
+2. Add test email addresses
+3. Test users can make purchases without real payment
+4. Use real purchase flow to test the integration
+
+
+🔐 PREMIUM STATUS CHECK:
+────────────────────────
+Use anywhere in your app:
+
+if (SubscriptionHelper.isPremiumUser(context)) {
+    // Show premium features
+} else {
+    // Show "Upgrade to Premium" message
+}
+
+
+📊 GET ACTIVE PLAN:
+───────────────────
+val activePlan = SubscriptionHelper.getActivePlan(context)
+when (activePlan) {
+    PlanType.MONTHLY -> // User has monthly
+    PlanType.YEARLY -> // User has yearly
+    PlanType.LIFETIME -> // User has lifetime
+    null -> // No active plan
+}
+
+
+⏰ GET DAYS REMAINING:
+──────────────────────
+val daysLeft = SubscriptionHelper.getDaysRemaining(context)
+if (daysLeft == -1) {
+    // Lifetime plan
+} else if (daysLeft > 0) {
+    // Show "X days remaining"
+} else {
+    // Plan expired
+}
+
+
+🎨 UI FEATURES:
+───────────────
+✓ Beautiful gradient cards
+✓ Plan selection with animation
+✓ Best Value & Most Popular badges
+✓ Animated icons in header
+✓ Loading state during purchase
+✓ Success/error toast messages
+
+
+📝 IMPORTANT NOTES:
+───────────────────
+1. Product IDs MUST match exactly in code and Play Console
+2. Prices are in Indian Rupees (INR)
+3. Products take 2-3 hours to activate after creation
+4. For testing, add license testers in Play Console
+5. Plan icon in MainActivity header is now clickable
+6. Billing library v7.0.0 already added in build.gradle
+
+
+═══════════════════════════════════════════════════════════════════
+                         SETUP COMPLETE! 🎉
+═══════════════════════════════════════════════════════════════════

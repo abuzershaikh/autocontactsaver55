@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Auto contacts saver</string>
+    <string name="app_name">Auto Contact Saver</string>
+    <string name="accessibility_service_description">This service reads text from WhatsApp chats to extract phone numbers and save them as contacts. It only works when you open WhatsApp through the Chat Contact Saver feature.</string>
 </resources>

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.contactsaver.autocontactsaver.preview.NumberPreviewActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -159,6 +160,7 @@ private fun OcrResultScreen(
                 )
             }
         ) { innerPadding ->
+            val context = LocalContext.current
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -175,6 +177,36 @@ private fun OcrResultScreen(
                     savedImagePath = savedImagePath
                 )
                 NumberListCard(numbers = numbers)
+
+                // Preview & Save Button
+                if (numbers.isNotEmpty()) {
+                    Button(
+                        onClick = {
+                            val intent = NumberPreviewActivity.createIntent(context, numbers)
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(54.dp),
+                        shape = RoundedCornerShape(18.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF1F62C9)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Phone,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.size(8.dp))
+                        Text(
+                            text = "Preview & Save Contacts",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+
                 RawTextCard(extractedText = extractedText)
             }
         }

@@ -13,6 +13,7 @@ activityCompose = "1.11.0"
 composeBom = "2026.02.01"
 lifecycleRuntimeKtx = "2.9.4"
 mlkitTextRecognition = "16.0.1"
+googleServices = "4.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,3 +39,4 @@ google-mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recog
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
