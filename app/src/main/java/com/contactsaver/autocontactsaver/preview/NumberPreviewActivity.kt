@@ -38,6 +38,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
@@ -58,12 +59,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -75,6 +79,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
 import java.text.SimpleDateFormat
@@ -110,7 +115,10 @@ class NumberPreviewActivity : ComponentActivity() {
          * Create an intent to launch NumberPreviewActivity.
          * Any extraction method (OCR, Chat, Group, Call) can use this.
          */
-        fun createIntent(context: Context, numbers: List<String>): Intent {
+        fun createIntent(
+            context: Context,
+            numbers: List<String>
+        ): Intent {
             return Intent(context, NumberPreviewActivity::class.java).apply {
                 putStringArrayListExtra(EXTRA_NUMBERS, ArrayList(numbers))
             }
@@ -139,9 +147,129 @@ private fun NumberPreviewScreen(
     numbers: List<String>,
     onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     var seriesName by remember { mutableStateOf("Contact") }
     var startFrom by remember { mutableIntStateOf(1) }
     val selectedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(numbers.size) { true }) } }
+    var showTrialLimitDialog by remember { mutableStateOf(false) }
+    var previewTrialReservationChecked by rememberSaveable { mutableStateOf(false) }
+    var previewSaveAllowed by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(numbers.size) {
+        if (previewTrialReservationChecked) return@LaunchedEffect
+        previewTrialReservationChecked = true
+
+        val userId = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserId()
+        if (userId != null) {
+            val isPremium = com.contactsaver.autocontactsaver.plan.UserManager.isPremiumUser(userId)
+                .getOrDefault(false)
+
+            if (isPremium) {
+                previewSaveAllowed = true
+            } else {
+                val canReserve = com.contactsaver.autocontactsaver.plan.UserManager.canSaveContacts(
+                    userId,
+                    requestedCount = numbers.size
+                ).getOrDefault(false)
+
+                if (canReserve) {
+                    val reserveResult = com.contactsaver.autocontactsaver.plan.UserManager.incrementContactsSaved(
+                        userId = userId,
+                        count = numbers.size
+                    )
+
+                    previewSaveAllowed = reserveResult.isSuccess
+                    if (!reserveResult.isSuccess) {
+                        showTrialLimitDialog = true
+                    }
+                } else {
+                    previewSaveAllowed = false
+                    showTrialLimitDialog = true
+                }
+            }
+        } else {
+            previewSaveAllowed = true
+        }
+    }
+    
+    // Preview screen already reserves trial quota for signed-in trial users.
+    val checkTrialLimitAndSave: (Int, suspend () -> Unit) -> Unit = { _, saveAction ->
+        scope.launch {
+            if (previewSaveAllowed) {
+                saveAction()
+            } else {
+                showTrialLimitDialog = true
+            }
+        }
+    }
+    
+    // Trial Limit Dialog
+    if (showTrialLimitDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showTrialLimitDialog = false },
+            icon = {
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = androidx.compose.ui.graphics.Color(0xFFFFA726),
+                    modifier = Modifier.size(48.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Trial Limit Reached",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "You've reached the free trial limit.",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "To continue saving contacts, upgrade to a premium plan:",
+                        fontSize = 14.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("• Monthly: ₹199 (30 days)", fontSize = 13.sp, color = TextSecondary)
+                    Text("• Yearly: ₹999 (Best Value)", fontSize = 13.sp, color = TextSecondary)
+                    Text("• Lifetime: ₹1999 (One-time)", fontSize = 13.sp, color = TextSecondary)
+                }
+            },
+            confirmButton = {
+                    Button(
+                    onClick = {
+                        showTrialLimitDialog = false
+                        // Open PlanActivity
+                        val intent = android.content.Intent(
+                            context,
+                            com.contactsaver.autocontactsaver.plan.PlanActivity::class.java
+                        )
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = PrimaryGreen
+                    )
+                ) {
+                    Text("View Plans", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = { showTrialLimitDialog = false }
+                ) {
+                    Text("Maybe Later", color = TextSecondary)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -188,7 +316,10 @@ private fun NumberPreviewScreen(
                     numbers = numbers,
                     seriesName = seriesName,
                     startFrom = startFrom,
-                    selectedStates = selectedStates
+                    selectedStates = selectedStates,
+                    previewSaveAllowed = previewSaveAllowed,
+                    onUpgradeRequired = { showTrialLimitDialog = true },
+                    onSaveClick = checkTrialLimitAndSave
                 )
             }
         ) { innerPadding ->
@@ -455,7 +586,10 @@ private fun SaveFormatBar(
     numbers: List<String>,
     seriesName: String,
     startFrom: Int,
-    selectedStates: List<Boolean>
+    selectedStates: List<Boolean>,
+    previewSaveAllowed: Boolean,
+    onUpgradeRequired: () -> Unit,
+    onSaveClick: (Int, suspend () -> Unit) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -498,14 +632,23 @@ private fun SaveFormatBar(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     SaveButton(
-                            label = "CSV",
-                            containerColor = DarkGreen,
-                            onClick = {
+                        label = "CSV",
+                        containerColor = if (previewSaveAllowed) DarkGreen else TextMuted,
+                        onClick = {
+                            if (previewSaveAllowed) {
                                 saveAsCsv(
-                                    context, numbers, seriesName, startFrom, selectedStates
+                                    context = context,
+                                    numbers = numbers,
+                                    seriesName = seriesName,
+                                    startFrom = startFrom,
+                                    selectedStates = selectedStates,
+                                    allowSave = true
                                 )
+                            } else {
+                                onUpgradeRequired()
                             }
-                        )
+                        }
+                    )
                 }
 
                 // Save to Contacts (opens Gmail/Contacts app)
@@ -521,10 +664,17 @@ private fun SaveFormatBar(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
+                        enabled = previewSaveAllowed,
                         onClick = {
-                            saveToContacts(
-                                context, numbers, seriesName, startFrom, selectedStates
-                            )
+                            onSaveClick(selectedCount) {
+                                saveToContacts(
+                                    context = context,
+                                    numbers = numbers,
+                                    seriesName = seriesName,
+                                    startFrom = startFrom,
+                                    selectedStates = selectedStates
+                                )
+                            }
                         },
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
@@ -600,8 +750,18 @@ private fun saveAsCsv(
     numbers: List<String>,
     seriesName: String,
     startFrom: Int,
-    selectedStates: List<Boolean>
+    selectedStates: List<Boolean>,
+    allowSave: Boolean
 ) {
+    if (!allowSave) {
+        Toast.makeText(
+            context,
+            "Trial limit reached. Upgrade to download CSV.",
+            Toast.LENGTH_SHORT
+        ).show()
+        return
+    }
+
     val contacts = getSelectedContacts(numbers, seriesName, startFrom, selectedStates)
     if (contacts.isEmpty()) {
         Toast.makeText(context, "No contacts selected", Toast.LENGTH_SHORT).show()
@@ -660,7 +820,7 @@ private fun saveAsVcf(
     }
 }
 
-private fun saveToContacts(
+private suspend fun saveToContacts(
     context: Context,
     numbers: List<String>,
     seriesName: String,
@@ -706,6 +866,12 @@ private fun saveToContacts(
         }
 
         context.startActivity(intent)
+        
+        Toast.makeText(
+            context, 
+            "Opening contacts app to import ${contacts.size} contact(s)", 
+            Toast.LENGTH_SHORT
+        ).show()
     } catch (e: Exception) {
         Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
     }

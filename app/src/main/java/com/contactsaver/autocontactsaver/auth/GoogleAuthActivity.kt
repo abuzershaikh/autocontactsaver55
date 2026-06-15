@@ -56,6 +56,11 @@ class GoogleAuthActivity : ComponentActivity() {
 
         credentialManager = CredentialManager.create(this)
 
+        if (com.google.firebase.auth.FirebaseAuth.getInstance().currentUser != null) {
+            openMainAndFinish()
+            return
+        }
+
         setContent {
             GoogleAuthScreen(
                 onGoogleSignInClick = { handleGoogleSignIn() }
@@ -117,10 +122,7 @@ class GoogleAuthActivity : ComponentActivity() {
                             ).show()
 
                             // Navigate to MainActivity
-                            val intent = Intent(this@GoogleAuthActivity, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
+                            openMainAndFinish()
                         } else {
                             Toast.makeText(
                                 this@GoogleAuthActivity,
@@ -144,6 +146,13 @@ class GoogleAuthActivity : ComponentActivity() {
                 ).show()
             }
         }
+    }
+
+    private fun openMainAndFinish() {
+        val intent = Intent(this@GoogleAuthActivity, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }
 

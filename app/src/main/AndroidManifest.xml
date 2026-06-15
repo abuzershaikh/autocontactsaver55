@@ -35,6 +35,9 @@
             android:name=".info.InfoPageActivity"
             android:exported="false" />
         <activity
+            android:name=".web.TutorialWebViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".ocr.OcrResultActivity"
             android:exported="false" />
         <activity

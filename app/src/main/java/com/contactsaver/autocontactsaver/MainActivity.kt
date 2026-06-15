@@ -81,6 +81,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -99,11 +100,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.contactsaver.autocontactsaver.ocr.AutoSaveOcrProcessor
 import com.contactsaver.autocontactsaver.preview.NumberPreviewActivity
 import com.contactsaver.autocontactsaver.plan.PlanActivity
@@ -139,7 +143,10 @@ class MainActivity : ComponentActivity() {
                     if (processedCount == uris.size) {
                         runOnUiThread {
                             if (allNumbers.isNotEmpty()) {
-                                val intent = NumberPreviewActivity.createIntent(this, allNumbers)
+                                val intent = NumberPreviewActivity.createIntent(
+                                    this@MainActivity,
+                                    allNumbers
+                                )
                                 startActivity(intent)
                             } else {
                                 Toast.makeText(
@@ -270,15 +277,16 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
     var userEmail by remember { mutableStateOf<String?>(null) }
     var userPhotoUrl by remember { mutableStateOf<String?>(null) }
     val context = androidx.compose.ui.platform.LocalContext.current
-    
-    // Load user status and profile info
-    LaunchedEffect(Unit) {
+    val scope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    suspend fun refreshUserHeader() {
         val userId = UserManager.getCurrentUserId()
         if (userId != null) {
             try {
                 userStatus = UserManager.getUserStatusMessage(userId)
                 isPremium = UserManager.isPremiumUser(userId).getOrDefault(false)
-                
+
                 // Get user info from Firebase Auth
                 val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
                 userName = currentUser?.displayName
@@ -295,6 +303,29 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
             }
         } else {
             userStatus = "Not signed in"
+            isPremium = false
+            userName = null
+            userEmail = null
+            userPhotoUrl = null
+        }
+    }
+    
+    LaunchedEffect(Unit) {
+        refreshUserHeader()
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                scope.launch {
+                    refreshUserHeader()
+                }
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
     
@@ -486,6 +517,16 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                         color = Color.White.copy(alpha = 0.85f),
                         fontWeight = FontWeight.Medium
                     )
+
+                    if (!isPremium) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "Free trial covers 100 contacts only. Buy a plan after that.",
+                            fontSize = 11.sp,
+                            color = Color.White.copy(alpha = 0.75f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
                 }
             }
 
@@ -890,19 +931,12 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                     ) {
                         IconButton(
                             onClick = onMenuClick,
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(CardWhite)
-                                .shadow(
-                                    elevation = 2.dp,
-                                    shape = RoundedCornerShape(12.dp)
-                                )
+                            modifier = Modifier.size(44.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Menu,
+                                painter = painterResource(id = R.drawable.menu),
                                 contentDescription = "Menu",
-                                tint = DarkGreen,
+                                tint = Color.Unspecified,
                                 modifier = Modifier.size(24.dp)
                             )
                         }
@@ -915,9 +949,9 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                                 modifier = Modifier.size(44.dp)
                             ) {
                                 Icon(
-                                    imageVector = Icons.Default.Settings,
+                                    painter = painterResource(id = R.drawable.accesibility),
                                     contentDescription = "Accessibility Settings",
-                                    tint = PrimaryGreen,
+                                    tint = Color.Unspecified,
                                     modifier = Modifier.size(26.dp)
                                 )
                             }
@@ -938,12 +972,21 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
 
                             Spacer(modifier = Modifier.width(14.dp))
 
-                            AnimatedHeaderIcon(
-                                drawableRes = R.drawable.youtube,
-                                contentDescription = "YouTube",
-                                size = 30.dp,
-                                delayMillis = 180
-                            )
+                            IconButton(
+                                onClick = {
+                                    context.startActivity(
+                                        com.contactsaver.autocontactsaver.web.TutorialWebViewActivity.createIntent(context)
+                                    )
+                                },
+                                modifier = Modifier.size(44.dp)
+                            ) {
+                                AnimatedHeaderIcon(
+                                    drawableRes = R.drawable.youtube,
+                                    contentDescription = "YouTube",
+                                    size = 30.dp,
+                                    delayMillis = 180
+                                )
+                            }
                         }
                     }
                     
@@ -962,7 +1005,10 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                 Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                     // ── Hero Card: Instant Save Mode ──
                     HeroInstantSaveCard(onStartSavingClick = {
-                        val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(context)
+                        val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(
+                            context,
+                            com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.FEATURE_CHAT_SAVER
+                        )
                         context.startActivity(intent)
                     })
 
@@ -970,7 +1016,10 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
 
                     // ── Feature Grid ──
                     FeatureGrid(onScanClick = onScanClick, onGroupExtractorClick = {
-                        val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(context)
+                        val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(
+                            context,
+                            com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR
+                        )
                         context.startActivity(intent)
                     })
 
@@ -1312,7 +1361,10 @@ private fun FeatureGrid(onScanClick: () -> Unit = {}, onGroupExtractorClick: () 
                             "Scan & Save" -> onScanClick
                             "Chat Contact Saver" -> {
                                 {
-                                    val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(context)
+                                    val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(
+                                        context,
+                                        com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.FEATURE_CHAT_SAVER
+                                    )
                                     context.startActivity(intent)
                                 }
                             }

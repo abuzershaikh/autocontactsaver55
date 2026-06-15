@@ -66,10 +66,15 @@ import androidx.compose.ui.unit.sp
 class WhatsAppSelectorActivity : ComponentActivity() {
     
     private var refreshTrigger = mutableStateOf(0)
+    private var featureType = mutableStateOf(FEATURE_CHAT_SAVER)
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        // Get feature type from intent
+        featureType.value = intent.getStringExtra(EXTRA_FEATURE_TYPE) ?: FEATURE_CHAT_SAVER
+        
         setContent {
             AutoContactsSaverTheme {
                 Surface(
@@ -78,7 +83,8 @@ class WhatsAppSelectorActivity : ComponentActivity() {
                 ) {
                     WhatsAppSelectorScreen(
                         onBack = { finish() },
-                        refreshTrigger = refreshTrigger.value
+                        refreshTrigger = refreshTrigger.value,
+                        featureType = featureType.value
                     )
                 }
             }
@@ -92,8 +98,14 @@ class WhatsAppSelectorActivity : ComponentActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context): Intent {
-            return Intent(context, WhatsAppSelectorActivity::class.java)
+        const val EXTRA_FEATURE_TYPE = "feature_type"
+        const val FEATURE_CHAT_SAVER = "chat_saver"
+        const val FEATURE_GROUP_EXTRACTOR = "group_extractor"
+        
+        fun createIntent(context: Context, featureType: String = FEATURE_CHAT_SAVER): Intent {
+            return Intent(context, WhatsAppSelectorActivity::class.java).apply {
+                putExtra(EXTRA_FEATURE_TYPE, featureType)
+            }
         }
     }
 }
@@ -108,7 +120,11 @@ private val TextSecondary = Color(0xFF757575)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun WhatsAppSelectorScreen(onBack: () -> Unit, refreshTrigger: Int = 0) {
+private fun WhatsAppSelectorScreen(
+    onBack: () -> Unit, 
+    refreshTrigger: Int = 0,
+    featureType: String = WhatsAppSelectorActivity.FEATURE_CHAT_SAVER
+) {
     val context = LocalContext.current
     var selectedApp by remember { mutableStateOf<WhatsAppType?>(null) }
     var showPermissionDialog by remember { mutableStateOf(false) }
@@ -116,6 +132,14 @@ private fun WhatsAppSelectorScreen(onBack: () -> Unit, refreshTrigger: Int = 0) 
     // Re-check accessibility status whenever refreshTrigger changes
     val accessibilityEnabled = remember(refreshTrigger) {
         isAccessibilityServiceEnabled(context)
+    }
+    
+    // Get title and subtitle based on feature type
+    val (title, subtitle) = when (featureType) {
+        WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR -> 
+            Pair("Group Extractor", "Extract all group member contacts")
+        else -> 
+            Pair("Chat Contact Saver", "Extract contacts from individual chats")
     }
 
     // Permission Dialog
@@ -213,12 +237,12 @@ private fun WhatsAppSelectorScreen(onBack: () -> Unit, refreshTrigger: Int = 0) 
                     title = {
                         Column {
                             Text(
-                                text = "Chat Saver",
+                                text = title,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 20.sp
                             )
                             Text(
-                                text = "Extract contacts from WhatsApp",
+                                text = subtitle,
                                 color = TextSecondary,
                                 fontSize = 12.sp
                             )
@@ -237,7 +261,7 @@ private fun WhatsAppSelectorScreen(onBack: () -> Unit, refreshTrigger: Int = 0) 
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Instructions Card
-                InstructionsCard()
+                InstructionsCard(featureType = featureType)
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -378,7 +402,20 @@ private fun WhatsAppSelectorScreen(onBack: () -> Unit, refreshTrigger: Int = 0) 
 }
 
 @Composable
-private fun InstructionsCard() {
+private fun InstructionsCard(featureType: String = WhatsAppSelectorActivity.FEATURE_CHAT_SAVER) {
+    val (icon, titleText, descText) = when (featureType) {
+        WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR -> Triple(
+            "👥",
+            "Extract All Group Member Contacts",
+            "This feature extracts phone numbers of all members from a WhatsApp group. Perfect for saving contacts of unknown group members who haven't messaged yet. Just open any group and let the app extract all visible numbers."
+        )
+        else -> Triple(
+            "💬",
+            "Extract Contacts from Individual Chats",
+            "This feature reads text from WhatsApp individual chats and automatically extracts phone numbers. You can scroll through your chat list and the app will collect all numbers it finds. Great for saving contacts from people who messaged you."
+        )
+    }
+    
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -391,14 +428,14 @@ private fun InstructionsCard() {
             modifier = Modifier.padding(20.dp)
         ) {
             Text(
-                text = "💬 Extract Contacts from WhatsApp",
+                text = "$icon $titleText",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextPrimary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "This feature reads text from WhatsApp chats and automatically extracts phone numbers. You can then save them as contacts.",
+                text = descText,
                 fontSize = 14.sp,
                 color = TextSecondary,
                 lineHeight = 20.sp

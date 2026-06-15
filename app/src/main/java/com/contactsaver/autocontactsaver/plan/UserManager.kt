@@ -75,13 +75,27 @@ object UserManager {
      */
     suspend fun getUserData(userId: String): Result<UserData> {
         return try {
-            val snapshot = firestore.collection(USERS_COLLECTION)
-                .document(userId)
-                .get()
-                .await()
+            val userRef = firestore.collection(USERS_COLLECTION).document(userId)
+            val snapshot = userRef.get().await()
 
-            val userData = snapshot.toObject(UserData::class.java)
-                ?: throw Exception("User not found")
+            val userData = if (!snapshot.exists()) {
+                val email = auth.currentUser?.email.orEmpty()
+                val defaultUser = UserData(
+                    userId = userId,
+                    email = email,
+                    planType = "TRIAL",
+                    contactsSaved = 0,
+                    trialContactsLimit = 100,
+                    purchaseDate = System.currentTimeMillis(),
+                    expiryDate = 0L,
+                    isActive = true
+                )
+                userRef.set(defaultUser).await()
+                defaultUser
+            } else {
+                snapshot.toObject(UserData::class.java)
+                    ?: throw Exception("Failed to parse user data")
+            }
 
             Result.success(userData)
         } catch (e: Exception) {
@@ -96,16 +110,30 @@ object UserManager {
     suspend fun incrementContactsSaved(userId: String, count: Int = 1): Result<Int> {
         return try {
             val userRef = firestore.collection(USERS_COLLECTION).document(userId)
+            val now = System.currentTimeMillis()
             
             firestore.runTransaction { transaction ->
                 val snapshot = transaction.get(userRef)
                 val currentCount = snapshot.getLong("contactsSaved")?.toInt() ?: 0
                 val newCount = currentCount + count
-                
-                transaction.update(userRef, mapOf(
+
+                val updates = mapOf(
+                    "userId" to userId,
+                    "email" to (auth.currentUser?.email ?: ""),
+                    "planType" to (snapshot.getString("planType") ?: "TRIAL"),
                     "contactsSaved" to newCount,
-                    "lastUpdated" to System.currentTimeMillis()
-                ))
+                    "trialContactsLimit" to (snapshot.getLong("trialContactsLimit")?.toInt() ?: 100),
+                    "purchaseDate" to (snapshot.getLong("purchaseDate") ?: now),
+                    "expiryDate" to (snapshot.getLong("expiryDate") ?: 0L),
+                    "isActive" to (snapshot.getBoolean("isActive") ?: true),
+                    "lastUpdated" to now
+                )
+
+                if (snapshot.exists()) {
+                    transaction.update(userRef, updates)
+                } else {
+                    transaction.set(userRef, updates, SetOptions.merge())
+                }
                 
                 newCount
             }.await()
@@ -120,12 +148,12 @@ object UserManager {
     /**
      * Check if user can save contacts (within trial limit or has premium)
      */
-    suspend fun canSaveContacts(userId: String): Result<Boolean> {
+    suspend fun canSaveContacts(userId: String, requestedCount: Int = 1): Result<Boolean> {
         return try {
             val userData = getUserData(userId).getOrThrow()
             
             val canSave = when (userData.planType) {
-                "TRIAL" -> userData.contactsSaved < userData.trialContactsLimit
+                "TRIAL" -> userData.contactsSaved + requestedCount <= userData.trialContactsLimit
                 "MONTHLY", "YEARLY" -> {
                     // Check if plan is still valid
                     if (userData.expiryDate > 0) {
@@ -238,7 +266,11 @@ object UserManager {
                 when (userData.planType) {
                     "TRIAL" -> {
                         val remaining = userData.trialContactsLimit - userData.contactsSaved
-                        "Trial: $remaining/${userData.trialContactsLimit} contacts left"
+                        if (remaining > 0) {
+                            "Trial: $remaining/${userData.trialContactsLimit} contacts left"
+                        } else {
+                            "Trial ended - buy a premium plan to continue"
+                        }
                     }
                     "MONTHLY" -> "Premium Monthly"
                     "YEARLY" -> "Premium Yearly"
