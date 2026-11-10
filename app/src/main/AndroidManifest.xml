@@ -35,10 +35,13 @@
             android:name=".info.InfoPageActivity"
             android:exported="false" />
         <activity
-            android:name=".web.TutorialWebViewActivity"
+            android:name=".web.TutorialActivity"
             android:exported="false" />
         <activity
             android:name=".ocr.OcrResultActivity"
+            android:exported="false" />
+        <activity
+            android:name=".auth.UserProfileSetupActivity"
             android:exported="false" />
         <activity
             android:name=".auth.GoogleAuthActivity"

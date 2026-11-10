@@ -9,9 +9,6 @@ import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Utility for exporting contacts to different formats
- */
 object ContactExporter {
 
     data class ContactData(
@@ -25,9 +22,7 @@ object ContactExporter {
         EXCEL, CSV, VCF
     }
 
-    /**
-     * Export contacts to selected format
-     */
+    
     fun exportContacts(
         context: Context,
         contacts: List<ContactData>,
@@ -45,21 +40,19 @@ object ContactExporter {
         }
     }
 
-    /**
-     * Export to Excel format (.xlsx)
-     */
+    
     private fun exportToExcel(context: Context, contacts: List<ContactData>): File {
         val workbook = XSSFWorkbook()
         val sheet = workbook.createSheet("Contacts")
 
-        // Create header row
+        
         val headerRow = sheet.createRow(0)
         headerRow.createCell(0).setCellValue("Name")
         headerRow.createCell(1).setCellValue("Phone Number")
         headerRow.createCell(2).setCellValue("Email")
         headerRow.createCell(3).setCellValue("Notes")
 
-        // Add data rows
+        
         contacts.forEachIndexed { index, contact ->
             val row = sheet.createRow(index + 1)
             row.createCell(0).setCellValue(contact.name)
@@ -68,12 +61,12 @@ object ContactExporter {
             row.createCell(3).setCellValue(contact.notes)
         }
 
-        // Auto-size columns
+        
         for (i in 0..3) {
             sheet.autoSizeColumn(i)
         }
 
-        // Save to file
+        
         val file = createExportFile(context, "xlsx")
         FileOutputStream(file).use { outputStream ->
             workbook.write(outputStream)
@@ -83,17 +76,15 @@ object ContactExporter {
         return file
     }
 
-    /**
-     * Export to CSV format
-     */
+    
     private fun exportToCSV(context: Context, contacts: List<ContactData>): File {
         val file = createExportFile(context, "csv")
         
         FileOutputStream(file).bufferedWriter().use { writer ->
-            // Write header
+            
             writer.write("Name,Phone Number,Email,Notes\n")
             
-            // Write data
+            
             contacts.forEach { contact ->
                 val line = listOf(
                     escapeCSV(contact.name),
@@ -108,9 +99,7 @@ object ContactExporter {
         return file
     }
 
-    /**
-     * Export to VCF format (vCard)
-     */
+    
     private fun exportToVCF(context: Context, contacts: List<ContactData>): File {
         val file = createExportFile(context, "vcf")
         
@@ -136,9 +125,7 @@ object ContactExporter {
         return file
     }
 
-    /**
-     * Create export file with timestamp
-     */
+    
     private fun createExportFile(context: Context, extension: String): File {
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
             .format(Date())
@@ -148,9 +135,7 @@ object ContactExporter {
         return File(downloadsDir, fileName)
     }
 
-    /**
-     * Escape CSV special characters
-     */
+    
     private fun escapeCSV(value: String): String {
         return if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
             "\"${value.replace("\"", "\"\"")}\""
@@ -159,9 +144,7 @@ object ContactExporter {
         }
     }
 
-    /**
-     * Get file extension name for format
-     */
+    
     fun getFormatExtension(format: ExportFormat): String {
         return when (format) {
             ExportFormat.EXCEL -> "xlsx"
@@ -170,9 +153,7 @@ object ContactExporter {
         }
     }
 
-    /**
-     * Get format display name
-     */
+    
     fun getFormatName(format: ExportFormat): String {
         return when (format) {
             ExportFormat.EXCEL -> "Excel (.xlsx)"

@@ -22,3 +22,7 @@ google-services.json
 .vs/
 .vscode/
 .wrangler/
+
+node_modules/
+firebase-export/node_modules/
+

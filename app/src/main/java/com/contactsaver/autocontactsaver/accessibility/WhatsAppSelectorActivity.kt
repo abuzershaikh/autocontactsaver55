@@ -8,8 +8,13 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +24,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,13 +35,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,10 +56,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -72,7 +84,7 @@ class WhatsAppSelectorActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        // Get feature type from intent
+        
         featureType.value = intent.getStringExtra(EXTRA_FEATURE_TYPE) ?: FEATURE_CHAT_SAVER
         
         setContent {
@@ -93,7 +105,7 @@ class WhatsAppSelectorActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Trigger recomposition to check accessibility status
+        
         refreshTrigger.value++
     }
 
@@ -110,13 +122,13 @@ class WhatsAppSelectorActivity : ComponentActivity() {
     }
 }
 
-// Theme Colors
 private val LightGreen = Color(0xFFF1F8E9)
 private val PrimaryGreen = Color(0xFF4CAF50)
 private val DarkGreen = Color(0xFF388E3C)
 private val CardGreen = Color(0xFF81C784)
 private val TextPrimary = Color(0xFF212121)
 private val TextSecondary = Color(0xFF757575)
+private val SurfaceLight = Color(0xFFFAFDFA)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,23 +138,25 @@ private fun WhatsAppSelectorScreen(
     featureType: String = WhatsAppSelectorActivity.FEATURE_CHAT_SAVER
 ) {
     val context = LocalContext.current
-    var selectedApp by remember { mutableStateOf<WhatsAppType?>(null) }
     var showPermissionDialog by remember { mutableStateOf(false) }
+    var showInfoDialog by remember { mutableStateOf(false) }
+    var showVoiceDialog by remember { mutableStateOf(false) }
+    var dropdownExpanded by remember { mutableStateOf(false) }
     
-    // Re-check accessibility status whenever refreshTrigger changes
+    
     val accessibilityEnabled = remember(refreshTrigger) {
         isAccessibilityServiceEnabled(context)
     }
     
-    // Get title and subtitle based on feature type
+    
     val (title, subtitle) = when (featureType) {
         WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR -> 
-            Pair("Group Extractor", "Extract all group member contacts")
+            Pair("Group Extractor", "Extract group member contacts")
         else -> 
-            Pair("Chat Contact Saver", "Extract contacts from individual chats")
+            Pair("Chat Contact Saver", "Extract contacts from chats")
     }
 
-    // Permission Dialog
+    
     if (showPermissionDialog) {
         AlertDialog(
             onDismissRequest = { showPermissionDialog = false },
@@ -151,38 +165,38 @@ private fun WhatsAppSelectorScreen(
                     imageVector = Icons.Default.Settings,
                     contentDescription = null,
                     tint = PrimaryGreen,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(40.dp)
                 )
             },
             title = {
                 Text(
-                    text = "Accessibility Permission Required",
+                    text = "Accessibility Permission",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     textAlign = TextAlign.Center
                 )
             },
             text = {
                 Column {
                     Text(
-                        text = "Auto Contact Saver needs accessibility permission to:",
+                        text = "Auto Contact Saver needs this to:",
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp,
-                        modifier = Modifier.padding(bottom = 12.dp)
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                     
                     PermissionReasonItem("📱 Read text from WhatsApp chats")
                     PermissionReasonItem("🔍 Extract phone numbers automatically")
                     PermissionReasonItem("💾 Help you save contacts quickly")
                     
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     
                     Text(
-                        text = "⚠️ Important: This permission only works when you're actively using the app. We don't access your data in the background.",
-                        fontSize = 13.sp,
+                        text = "⚠️ Only works when app is active. No background data access.",
+                        fontSize = 11.sp,
                         color = TextSecondary,
-                        lineHeight = 18.sp,
-                        modifier = Modifier.padding(top = 8.dp)
+                        lineHeight = 16.sp,
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
             },
@@ -192,22 +206,35 @@ private fun WhatsAppSelectorScreen(
                         showPermissionDialog = false
                         openAccessibilitySettings(context)
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = PrimaryGreen
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
-                    Text("Agree & Continue", fontWeight = FontWeight.Bold)
+                    Text("Agree & Continue", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = { showPermissionDialog = false }
-                ) {
-                    Text("Decline", color = TextSecondary)
+                TextButton(onClick = { showPermissionDialog = false }) {
+                    Text("Decline", color = TextSecondary, fontSize = 13.sp)
                 }
             },
             containerColor = Color.White,
             shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+    
+    if (showInfoDialog) {
+        StepByStepInfoDialog(
+            featureType = featureType,
+            onDismiss = { showInfoDialog = false }
+        )
+    }
+
+    
+    if (showVoiceDialog) {
+        VoiceSelectionDialog(
+            context = context,
+            onDismiss = { showVoiceDialog = false }
         )
     }
 
@@ -239,13 +266,52 @@ private fun WhatsAppSelectorScreen(
                             Text(
                                 text = title,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp
+                                fontSize = 18.sp
                             )
                             Text(
                                 text = subtitle,
                                 color = TextSecondary,
-                                fontSize = 12.sp
+                                fontSize = 11.sp
                             )
+                        }
+                    },
+                    actions = {
+                        
+                        IconButton(onClick = { showVoiceDialog = true }) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(PrimaryGreen.copy(alpha = 0.1f))
+                                    .border(1.dp, PrimaryGreen.copy(alpha = 0.3f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.VolumeUp,
+                                    contentDescription = "Voice Explanation",
+                                    tint = PrimaryGreen,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+
+                        
+                        IconButton(onClick = { showInfoDialog = true }) {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(PrimaryGreen.copy(alpha = 0.1f))
+                                    .border(1.dp, PrimaryGreen.copy(alpha = 0.3f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = "Info",
+                                    tint = PrimaryGreen,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
                 )
@@ -256,220 +322,157 @@ private fun WhatsAppSelectorScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .statusBarsPadding()
-                    .padding(24.dp)
+                    .navigationBarsPadding()
+                    .padding(horizontal = 18.dp)
                     .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                // Instructions Card
-                InstructionsCard(featureType = featureType)
+                Spacer(modifier = Modifier.height(2.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
+                
+                HowToUseCard(featureType = featureType)
 
-                // Step 1: Enable Accessibility
-                StepCard(
-                    stepNumber = "1",
-                    title = "Enable Accessibility Service",
-                    description = "Allow app to read WhatsApp chats",
-                    isCompleted = accessibilityEnabled,
-                    actionButton = {
-                        Button(
-                            onClick = {
-                                if (!accessibilityEnabled) {
-                                    showPermissionDialog = true
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (accessibilityEnabled) CardGreen else PrimaryGreen
-                            ),
-                            shape = RoundedCornerShape(12.dp)
+                
+                AnimatedVisibility(
+                    visible = !accessibilityEnabled,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    CompactStepCard(
+                        stepNumber = "1",
+                        title = "Enable Accessibility",
+                        description = "Required to read WhatsApp chats",
+                        isCompleted = false,
+                        onAction = { showPermissionDialog = true },
+                        actionText = "Enable"
+                    )
+                }
+
+                
+                AnimatedVisibility(
+                    visible = accessibilityEnabled,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut()
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                        
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(PrimaryGreen.copy(alpha = 0.08f))
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = if (accessibilityEnabled) Icons.Default.CheckCircle else Icons.Default.Settings,
+                                imageVector = Icons.Default.CheckCircle,
                                 contentDescription = null,
-                                modifier = Modifier.size(18.dp)
+                                tint = PrimaryGreen,
+                                modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = if (accessibilityEnabled) "Enabled ✓" else "Enable",
-                                fontWeight = FontWeight.Bold
+                                text = "Accessibility enabled",
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = DarkGreen
                             )
                         }
-                    }
-                )
 
-                // Step 2: Select WhatsApp
-                StepCard(
-                    stepNumber = "2",
-                    title = "Select WhatsApp Version",
-                    description = "Choose which WhatsApp to extract from",
-                    isCompleted = selectedApp != null,
-                    actionButton = null
-                )
-
-                // WhatsApp Options
-                WhatsAppOption(
-                    type = WhatsAppType.WHATSAPP,
-                    isSelected = selectedApp == WhatsAppType.WHATSAPP,
-                    onClick = { selectedApp = WhatsAppType.WHATSAPP }
-                )
-
-                WhatsAppOption(
-                    type = WhatsAppType.WHATSAPP_BUSINESS,
-                    isSelected = selectedApp == WhatsAppType.WHATSAPP_BUSINESS,
-                    onClick = { selectedApp = WhatsAppType.WHATSAPP_BUSINESS }
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Open WhatsApp Button
-                Button(
-                    onClick = {
-                        if (!accessibilityEnabled) {
-                            Toast.makeText(
-                                context,
-                                "Please enable accessibility service first",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@Button
-                        }
-
-                        if (selectedApp == null) {
-                            Toast.makeText(
-                                context,
-                                "Please select WhatsApp version",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@Button
-                        }
-
-                        openWhatsApp(context, selectedApp!!)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DarkGreen
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    enabled = accessibilityEnabled && selectedApp != null
-                ) {
-                    Text(
-                        text = "Open WhatsApp & Start Extracting",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        imageVector = Icons.Default.ArrowForward,
-                        contentDescription = null
-                    )
-                }
-
-                // Instructions
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.7f)
-                    ),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = "📱 How to use:",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
-                            color = TextPrimary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "1. Enable accessibility service\n" +
-                                    "2. Select WhatsApp version\n" +
-                                    "3. Open WhatsApp\n" +
-                                    "4. Scroll through chats\n" +
-                                    "5. Come back to this app manually\n" +
-                                    "6. Preview & save extracted contacts",
-                            fontSize = 13.sp,
-                            color = TextSecondary,
-                            lineHeight = 20.sp
+                        
+                        WhatsAppDropdownSelector(
+                            dropdownExpanded = dropdownExpanded,
+                            onExpandChange = { dropdownExpanded = it },
+                            onSelect = { type ->
+                                dropdownExpanded = false
+                                
+                                openWhatsApp(context, type)
+                            }
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
 }
 
 @Composable
-private fun InstructionsCard(featureType: String = WhatsAppSelectorActivity.FEATURE_CHAT_SAVER) {
-    val (icon, titleText, descText) = when (featureType) {
-        WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR -> Triple(
-            "👥",
-            "Extract All Group Member Contacts",
-            "This feature extracts phone numbers of all members from a WhatsApp group. Perfect for saving contacts of unknown group members who haven't messaged yet. Just open any group and let the app extract all visible numbers."
+private fun HowToUseCard(featureType: String) {
+    val steps = when (featureType) {
+        WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR -> listOf(
+            "Enable accessibility service",
+            "Select WhatsApp version below",
+            "Open any group chat",
+            "Let app extract member numbers",
+            "Come back & save contacts"
         )
-        else -> Triple(
-            "💬",
-            "Extract Contacts from Individual Chats",
-            "This feature reads text from WhatsApp individual chats and automatically extracts phone numbers. You can scroll through your chat list and the app will collect all numbers it finds. Great for saving contacts from people who messaged you."
+        else -> listOf(
+            "Enable accessibility service",
+            "Select WhatsApp version below",
+            "Scroll through chats",
+            "Come back to this app",
+            "Preview & save contacts"
         )
     }
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        colors = CardDefaults.cardColors(containerColor = SurfaceLight),
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(14.dp)
         ) {
             Text(
-                text = "$icon $titleText",
-                fontSize = 18.sp,
+                text = "📱 How to use",
                 fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
                 color = TextPrimary
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = descText,
-                fontSize = 14.sp,
-                color = TextSecondary,
-                lineHeight = 20.sp
-            )
+            Spacer(modifier = Modifier.height(6.dp))
+            steps.forEachIndexed { index, step ->
+                Text(
+                    text = "${index + 1}. $step",
+                    fontSize = 11.sp,
+                    color = TextSecondary,
+                    lineHeight = 16.sp,
+                    modifier = Modifier.padding(vertical = 1.dp)
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun StepCard(
+private fun CompactStepCard(
     stepNumber: String,
     title: String,
     description: String,
     isCompleted: Boolean,
-    actionButton: @Composable (() -> Unit)?
+    onAction: () -> Unit,
+    actionText: String
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (isCompleted) CardGreen.copy(alpha = 0.2f) else Color.White
+            containerColor = if (isCompleted) CardGreen.copy(alpha = 0.15f) else Color.White
         ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Step Number
+            
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(32.dp)
                     .clip(CircleShape)
                     .background(if (isCompleted) PrimaryGreen else CardGreen.copy(alpha = 0.3f)),
                 contentAlignment = Alignment.Center
@@ -479,106 +482,167 @@ private fun StepCard(
                         imageVector = Icons.Default.CheckCircle,
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 } else {
                     Text(
                         text = stepNumber,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        fontSize = 14.sp,
                         color = DarkGreen
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(10.dp))
 
-            // Text Content
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
                     color = TextPrimary
                 )
                 Text(
                     text = description,
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     color = TextSecondary
                 )
             }
 
-            // Action Button
-            if (actionButton != null) {
-                Spacer(modifier = Modifier.width(8.dp))
-                actionButton()
+            Spacer(modifier = Modifier.width(6.dp))
+
+            Button(
+                onClick = onAction,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isCompleted) CardGreen else PrimaryGreen
+                ),
+                shape = RoundedCornerShape(10.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                modifier = Modifier.height(34.dp)
+            ) {
+                Icon(
+                    imageVector = if (isCompleted) Icons.Default.CheckCircle else Icons.Default.Settings,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = if (isCompleted) "Done" else actionText,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp
+                )
             }
         }
     }
 }
 
 @Composable
-private fun WhatsAppOption(
-    type: WhatsAppType,
-    isSelected: Boolean,
-    onClick: () -> Unit
+private fun WhatsAppDropdownSelector(
+    dropdownExpanded: Boolean,
+    onExpandChange: (Boolean) -> Unit,
+    onSelect: (WhatsAppType) -> Unit
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) PrimaryGreen.copy(alpha = 0.2f) else Color.White
-        ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 4.dp else 2.dp)
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Icon placeholder (you can add actual WhatsApp icons)
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(if (type == WhatsAppType.WHATSAPP) Color(0xFF25D366) else Color(0xFF128C7E)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = if (type == WhatsAppType.WHATSAPP) "W" else "WB",
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                text = "Select WhatsApp & Start",
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 13.sp,
+                color = TextPrimary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            
+            Box {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(LightGreen)
+                        .border(1.dp, PrimaryGreen.copy(alpha = 0.3f), RoundedCornerShape(10.dp))
+                        .clickable { onExpandChange(true) }
+                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Choose WhatsApp version...",
+                        fontSize = 13.sp,
+                        color = TextSecondary,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = PrimaryGreen,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = dropdownExpanded,
+                    onDismissRequest = { onExpandChange(false) },
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .background(Color.White)
+                ) {
+                    WhatsAppType.values().forEach { type ->
+                        DropdownMenuItem(
+                            text = {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    
+                                    Box(
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(RoundedCornerShape(7.dp))
+                                            .background(
+                                                if (type == WhatsAppType.WHATSAPP) Color(0xFF25D366) 
+                                                else Color(0xFF128C7E)
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = if (type == WhatsAppType.WHATSAPP) "W" else "B",
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = type.displayName,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontSize = 13.sp,
+                                            color = TextPrimary
+                                        )
+                                        Text(
+                                            text = type.packageName,
+                                            fontSize = 10.sp,
+                                            color = TextSecondary
+                                        )
+                                    }
+                                }
+                            },
+                            onClick = { onSelect(type) }
+                        )
+                    }
+                }
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = type.displayName,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = TextPrimary
-                )
-                Text(
-                    text = type.packageName,
-                    fontSize = 12.sp,
-                    color = TextSecondary
-                )
-            }
-
-            if (isSelected) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = "Selected",
-                    tint = PrimaryGreen,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
+            Text(
+                text = "WhatsApp will open automatically after selection",
+                fontSize = 10.sp,
+                color = TextSecondary,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -635,14 +699,14 @@ private fun PermissionReasonItem(text: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 3.dp),
         verticalAlignment = Alignment.Top
     ) {
         Text(
             text = text,
-            fontSize = 14.sp,
+            fontSize = 13.sp,
             color = TextPrimary,
-            lineHeight = 20.sp
+            lineHeight = 18.sp
         )
     }
 }
@@ -663,4 +727,383 @@ private fun AutoContactsSaverTheme(content: @Composable () -> Unit) {
         typography = androidx.compose.material3.Typography(),
         content = content
     )
+}
+
+@Composable
+private fun StepByStepInfoDialog(
+    featureType: String,
+    onDismiss: () -> Unit
+) {
+    val isGroup = featureType == WhatsAppSelectorActivity.FEATURE_GROUP_EXTRACTOR
+
+    val title = if (isGroup) "How Group Extractor Works" else "How Chat Saver Works"
+    val subtitle = if (isGroup) "Quick guide for extracting group member contacts:" else "Quick guide for extracting and saving chat contacts:"
+
+    val steps = if (isGroup) listOf(
+        "Enable Accessibility Service so Auto Contact Saver can read numbers from WhatsApp.",
+        "Use the dropdown selector to choose WhatsApp or WhatsApp Business.",
+        "Open any WhatsApp Group and view the Group Info page.",
+        "Scroll through the group members list to extract all unknown numbers automatically."
+    ) else listOf(
+        "Enable Accessibility Service so Auto Contact Saver can read numbers from WhatsApp.",
+        "Use the dropdown selector to choose WhatsApp or WhatsApp Business.",
+        "Open WhatsApp and scroll through your chat list or individual chats.",
+        "Come back to the app to preview, export, or save all collected numbers with one tap."
+    )
+
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = Color(0xFFF4EFF5), 
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF25D366)), 
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "i",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = title,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1C1B1F),
+                        lineHeight = 28.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text(
+                    text = subtitle,
+                    fontSize = 14.sp,
+                    color = Color(0xFF49454F),
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 20.sp
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    steps.forEachIndexed { index, stepText ->
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFEAF5EB)), 
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFF25D366)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "${index + 1}",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Text(
+                                    text = stepText,
+                                    fontSize = 13.5.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF0F401B), 
+                                    lineHeight = 19.sp
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(
+                            text = "Got it",
+                            color = Color(0xFF1E88E5), 
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun VoiceSelectionDialog(
+    context: Context,
+    onDismiss: () -> Unit
+) {
+    var isPlaying by remember { mutableStateOf(false) }
+    var currentLanguage by remember { mutableStateOf<String?>(null) } 
+    var mediaPlayer by remember { mutableStateOf<android.media.MediaPlayer?>(null) }
+
+    fun stopAudio() {
+        try {
+            mediaPlayer?.let { mp ->
+                if (mp.isPlaying) {
+                    mp.stop()
+                }
+                mp.release()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        mediaPlayer = null
+        isPlaying = false
+        currentLanguage = null
+    }
+
+    fun playAudio(assetFileName: String, lang: String) {
+        stopAudio()
+        try {
+            val afd = context.assets.openFd(assetFileName)
+            val mp = android.media.MediaPlayer().apply {
+                setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+                prepare()
+                start()
+                setOnCompletionListener {
+                    isPlaying = false
+                    currentLanguage = null
+                    try { release() } catch (e: Exception) {}
+                    mediaPlayer = null
+                }
+            }
+            mediaPlayer = mp
+            isPlaying = true
+            currentLanguage = lang
+        } catch (e: Exception) {
+            android.widget.Toast.makeText(context, "Failed to play audio: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    androidx.compose.runtime.DisposableEffect(Unit) {
+        onDispose {
+            stopAudio()
+        }
+    }
+
+    androidx.compose.ui.window.Dialog(onDismissRequest = {
+        stopAudio()
+        onDismiss()
+    }) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = Color(0xFFF4EFF5), 
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF25D366)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.VolumeUp,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column {
+                        Text(
+                            text = "Voice Explanation",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF1C1B1F)
+                        )
+                        Text(
+                            text = "Listen to audio guide in your language:",
+                            fontSize = 12.sp,
+                            color = Color(0xFF49454F)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (currentLanguage == "hindi" && isPlaying) Color(0xFFC8E6C9) else Color(0xFFEAF5EB)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            if (currentLanguage == "hindi" && isPlaying) {
+                                stopAudio()
+                            } else {
+                                playAudio("hindi.mp3", "hindi")
+                            }
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "🇮🇳", fontSize = 24.sp)
+                            Spacer(modifier = Modifier.width(14.dp))
+                            Column {
+                                Text(
+                                    text = "हिंदी वॉइस (Hindi Voice)",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF0F401B)
+                                )
+                                Text(
+                                    text = if (currentLanguage == "hindi" && isPlaying) "🔊 Playing audio..." else "Tap to play explanation in Hindi",
+                                    fontSize = 11.5.sp,
+                                    color = Color(0xFF1B4D24)
+                                )
+                            }
+                        }
+
+                        Icon(
+                            imageVector = if (currentLanguage == "hindi" && isPlaying) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
+                            contentDescription = "Play Hindi",
+                            tint = Color(0xFF25D366),
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                
+                Card(
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (currentLanguage == "english" && isPlaying) Color(0xFFC8E6C9) else Color(0xFFEAF5EB)
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            if (currentLanguage == "english" && isPlaying) {
+                                stopAudio()
+                            } else {
+                                playAudio("english.mp3", "english")
+                            }
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "🇬🇧", fontSize = 24.sp)
+                            Spacer(modifier = Modifier.width(14.dp))
+                            Column {
+                                Text(
+                                    text = "English Voice",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF0F401B)
+                                )
+                                Text(
+                                    text = if (currentLanguage == "english" && isPlaying) "🔊 Playing audio..." else "Tap to play explanation in English",
+                                    fontSize = 11.5.sp,
+                                    color = Color(0xFF1B4D24)
+                                )
+                            }
+                        }
+
+                        Icon(
+                            imageVector = if (currentLanguage == "english" && isPlaying) Icons.Default.PauseCircle else Icons.Default.PlayCircle,
+                            contentDescription = "Play English",
+                            tint = Color(0xFF25D366),
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = {
+                        stopAudio()
+                        onDismiss()
+                    }) {
+                        Text(
+                            text = if (isPlaying) "Stop & Close" else "Close",
+                            color = Color(0xFFD32F2F),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
 }

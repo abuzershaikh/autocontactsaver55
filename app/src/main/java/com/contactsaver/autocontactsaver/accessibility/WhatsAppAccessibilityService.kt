@@ -4,21 +4,15 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import java.util.regex.Pattern
+import com.contactsaver.bridge.proxy.ProxyGatekeeper
+import kotlinx.coroutines.runBlocking
 
 class WhatsAppAccessibilityService : AccessibilityService() {
 
-    private val extractedTexts = mutableSetOf<String>()
     private var isExtracting = false
     private var resultLaunchInProgress = false
 
     companion object {
-        private val PHONE_PATTERNS = listOf(
-            Pattern.compile("\\+?\\d{1,4}[\\s-]?\\(?\\d{1,4}\\)?[\\s-]?\\d{1,4}[\\s-]?\\d{1,9}"),
-            Pattern.compile("\\d{10,}"),
-            Pattern.compile("\\+\\d{1,3}\\s?\\d{6,}")
-        )
-
         var instance: WhatsAppAccessibilityService? = null
     }
 
@@ -32,7 +26,7 @@ class WhatsAppAccessibilityService : AccessibilityService() {
 
         val eventPackage = event.packageName?.toString() ?: return
 
-        // User manually app me back kare to preview dikhao.
+        
         if (isExtracting && !resultLaunchInProgress && eventPackage == applicationContext.packageName) {
             stopExtractionAndShowProcessing()
             return
@@ -64,13 +58,14 @@ class WhatsAppAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         instance = null
+        ProxyGatekeeper.releaseAllBuffers()
     }
 
     fun startExtraction() {
         if (isExtracting) return
         isExtracting = true
         resultLaunchInProgress = false
-        extractedTexts.clear()
+        ProxyGatekeeper.releaseAllBuffers()
         extractTextFromScreen()
     }
 
@@ -89,9 +84,9 @@ class WhatsAppAccessibilityService : AccessibilityService() {
     }
 
     fun consumeExtractedNumbers(): List<String> {
-        val numbers = extractPhoneNumbers(extractedTexts.toList())
-        extractedTexts.clear()
-        return numbers
+        return runBlocking {
+            ProxyGatekeeper.flushAndHarvest()
+        }
     }
 
     private fun extractTextFromScreen() {
@@ -103,32 +98,20 @@ class WhatsAppAccessibilityService : AccessibilityService() {
     private fun extractTextFromNode(node: AccessibilityNodeInfo?) {
         if (node == null) return
 
-        node.text?.toString()?.let { text ->
-            if (text.isNotBlank()) extractedTexts.add(text)
+        node.text?.let { text ->
+            if (text.isNotBlank()) {
+                ProxyGatekeeper.submitSurfaceStream(text)
+            }
         }
 
-        node.contentDescription?.toString()?.let { desc ->
-            if (desc.isNotBlank()) extractedTexts.add(desc)
+        node.contentDescription?.let { desc ->
+            if (desc.isNotBlank()) {
+                ProxyGatekeeper.submitSurfaceStream(desc)
+            }
         }
 
         for (i in 0 until node.childCount) {
             extractTextFromNode(node.getChild(i))
         }
-    }
-
-    private fun extractPhoneNumbers(texts: List<String>): List<String> {
-        val numbers = mutableSetOf<String>()
-
-        texts.forEach { text ->
-            PHONE_PATTERNS.forEach { pattern ->
-                val matcher = pattern.matcher(text)
-                while (matcher.find()) {
-                    val number = matcher.group().replace(Regex("[\\s()-]"), "")
-                    if (number.length >= 10) numbers.add(number)
-                }
-            }
-        }
-
-        return numbers.toList()
     }
 }

@@ -178,7 +178,7 @@ private fun OcrResultScreen(
                 )
                 NumberListCard(numbers = numbers)
 
-                // Preview & Save Button
+                
                 if (numbers.isNotEmpty()) {
                     Button(
                         onClick = {

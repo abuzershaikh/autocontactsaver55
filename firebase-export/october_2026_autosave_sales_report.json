@@ -1,0 +1,1060 @@
+{
+  "metadata": {
+    "app": "Auto Contact Saver (Autosave)",
+    "period": "October 2026 (01-Oct-2026 to 31-Oct-2026)",
+    "currency": "INR (₹)",
+    "generatedAt": "2026-11-09T21:59:47.040Z",
+    "source": "Razorpay Live Payments API + Firebase Firestore Production Database",
+    "reconciliationStatus": "100% Matched (37/37 Orders Verified in Database)"
+  },
+  "summary": {
+    "totalRevenueINR": 11763,
+    "totalOrdersCount": 37,
+    "planBreakdown": {
+      "MONTHLY": {
+        "count": 34,
+        "unitPriceINR": 199,
+        "revenueINR": 6766
+      },
+      "YEARLY": {
+        "count": 1,
+        "unitPriceINR": 999,
+        "revenueINR": 999
+      },
+      "LIFETIME": {
+        "count": 2,
+        "unitPriceINR": 1999,
+        "revenueINR": 3998
+      }
+    },
+    "razorpayAccountContext": {
+      "autosaveRevenueINR": 11763,
+      "walletTopupRevenueINR": 11751,
+      "autoStatusSchedulerRevenueINR": 2197,
+      "totalRazorpayAccountRevenueINR": 25711
+    }
+  },
+  "dailyBreakdown": {
+    "30/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Guriya Devi",
+          "email": "guriyakumaripatna9@gmail.com",
+          "phone": "+919821577292",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tu0wPm9GeCuFow",
+          "time": "11:34:33 am"
+        }
+      ]
+    },
+    "27/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Kuldeep Singh",
+          "email": "shivrayhandicraft@gmail.com",
+          "phone": "+918824008238",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tsdjn4ZuYtzuWf",
+          "time": "12:13:39 am"
+        }
+      ]
+    },
+    "26/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "इंजी. कन्हैया बैरागी",
+          "email": "padwarkanhaiya@gmail.com",
+          "phone": "+919406674580",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TsZa3J2KwkJLl8",
+          "time": "8:09:39 pm"
+        },
+        {
+          "name": "Aman Singhla",
+          "email": "singhlaama@gmail.com",
+          "phone": "+919266711141",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TsYcbEV7eg9kkx",
+          "time": "7:13:22 pm"
+        }
+      ]
+    },
+    "25/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Padmasree Srirangam",
+          "email": "padmasree.srirangam24@gmail.com",
+          "phone": "+919493885225",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TsEOPD7gyTOeGY",
+          "time": "11:26:04 pm"
+        },
+        {
+          "name": "gupta rakesh",
+          "email": "guptarakesh845415@gmail.com",
+          "phone": "+919006068924",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TryymTkq7touG0",
+          "time": "8:21:24 am"
+        }
+      ]
+    },
+    "24/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Williams Fleming",
+          "email": "williamsfleming01@gmail.com",
+          "phone": "+2349161394629",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TrqO2ZhhFzW8N5",
+          "time": "11:57:05 pm"
+        },
+        {
+          "name": "Juan Toro",
+          "email": "jtoro1850@gmail.com",
+          "phone": "+584123618943",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tra2k3AS8HNpIC",
+          "time": "7:57:49 am"
+        }
+      ]
+    },
+    "21/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Abdula Khan Ramdiya",
+          "email": "aisanakhana910@gmail.com",
+          "phone": "+917073508273",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TqVzqfFKvRD0L9",
+          "time": "3:21:18 pm"
+        }
+      ]
+    },
+    "20/10/2026": {
+      "count": 5,
+      "revenue": 995,
+      "plans": {
+        "MONTHLY": 5,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Cesar Gonzalez",
+          "email": "rocsro@gmail.com",
+          "phone": "+56962565031",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TqBAdR2Z5M6iQc",
+          "time": "6:58:57 pm"
+        },
+        {
+          "name": "Amerr",
+          "email": "almoatsem123@gmail.com",
+          "phone": "+967777962362",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TqAxYHHhzWj9f1",
+          "time": "6:46:34 pm"
+        },
+        {
+          "name": "Chetan D Panchal",
+          "email": "chetan.panchal3@gmail.com",
+          "phone": "+919413567802",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tq5WVAKQAnFAZO",
+          "time": "1:27:29 pm"
+        },
+        {
+          "name": "P.j. photo's",
+          "email": "chouhanpankaj573@gmail.com",
+          "phone": "+917984754838",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tq5LvDzAagV4JM",
+          "time": "1:17:28 pm"
+        },
+        {
+          "name": "Kayfounise",
+          "email": "kayfounise19@gmail.com",
+          "phone": "+50932356837",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tpzpt85hYTINDV",
+          "time": "7:53:41 am"
+        }
+      ]
+    },
+    "19/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "chhotu singh",
+          "email": "chhotusinghskp43@gmail.com",
+          "phone": "+919565957756",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TphoSFQttuPwgG",
+          "time": "2:15:50 pm"
+        },
+        {
+          "name": "Ravindra Janaseva Kendra",
+          "email": "ravindrajanaseva@gmail.com",
+          "phone": "+918218097098",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TpVLIyKF3VgE0v",
+          "time": "2:03:55 am"
+        }
+      ]
+    },
+    "16/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "miztajhay Business",
+          "email": "miztajhaybusiness@gmail.com",
+          "phone": "+233503548244",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_ToVaRzQFX2eSmn",
+          "time": "1:39:15 pm"
+        }
+      ]
+    },
+    "15/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "S S fatake Bazar",
+          "email": "ssfatakebazar@gmail.com",
+          "phone": "+918459045446",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_ToAZ2aavU2EZxU",
+          "time": "5:05:21 pm"
+        },
+        {
+          "name": "Radio Parbhani 90.8",
+          "email": "radioparbhani@gmail.com",
+          "phone": "+917790090034",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_To3UHpcoVQlu5T",
+          "time": "10:10:00 am"
+        }
+      ]
+    },
+    "14/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "ASDFG LKJH",
+          "email": "asdfglkjh8875@gmail.com",
+          "phone": "+8801571091735",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TnjMaPYESgjfrm",
+          "time": "2:28:50 pm"
+        }
+      ]
+    },
+    "13/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Meraback Up",
+          "email": "merabacku@gmail.com",
+          "phone": "+917000813142",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TnIyjZgZnmkKGn",
+          "time": "12:40:13 pm"
+        },
+        {
+          "name": "Sudarshan Khoje",
+          "email": "sudarshankhoje0@gmail.com",
+          "phone": "+917743852033",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TnIvAEvo8rvfbO",
+          "time": "12:36:51 pm"
+        }
+      ]
+    },
+    "11/10/2026": {
+      "count": 1,
+      "revenue": 1999,
+      "plans": {
+        "MONTHLY": 0,
+        "YEARLY": 0,
+        "LIFETIME": 1
+      },
+      "customers": [
+        {
+          "name": "Anand",
+          "email": "anand.shrivastav1252@gmail.com",
+          "phone": "+918290001252",
+          "plan": "LIFETIME",
+          "amount": 1999,
+          "paymentId": "pay_TmJWu6vRJIDL5M",
+          "time": "12:33:34 am"
+        }
+      ]
+    },
+    "9/10/2026": {
+      "count": 2,
+      "revenue": 1198,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 1,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "The Sunday Music",
+          "email": "thesundaymusic2@gmail.com",
+          "phone": "+919914956918",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TlrtEGx0QpoQ0b",
+          "time": "9:31:17 pm"
+        },
+        {
+          "name": "Mahendra Ateria",
+          "email": "mahendra.123jabalpur@gmail.com",
+          "phone": "+919770304174",
+          "plan": "YEARLY",
+          "amount": 999,
+          "paymentId": "pay_TlfXiRo8CKyev3",
+          "time": "9:26:36 am"
+        }
+      ]
+    },
+    "8/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "phonefab",
+          "email": "phonefabmail@gmail.com",
+          "phone": "+918434847172",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TlSKTTvtR5gBWv",
+          "time": "8:31:03 pm"
+        }
+      ]
+    },
+    "7/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Anawanti Clarisa",
+          "email": "anawanticlarissa@gmail.com",
+          "phone": "+2347034900024",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tl03ESY341bVdY",
+          "time": "4:51:18 pm"
+        }
+      ]
+    },
+    "6/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "samuel isme",
+          "email": "samuelisme19@gmail.com",
+          "phone": "+50938350749",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TkNCfouXLJccYx",
+          "time": "2:51:11 am"
+        }
+      ]
+    },
+    "5/10/2026": {
+      "count": 2,
+      "revenue": 2198,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 1
+      },
+      "customers": [
+        {
+          "name": "Makuochukwu Ohabueze",
+          "email": "ohabuezemakuochukwu@gmail.com",
+          "phone": "+2348162669082",
+          "plan": "LIFETIME",
+          "amount": 1999,
+          "paymentId": "pay_TkGbf67HxlLUgd",
+          "time": "8:23:59 pm"
+        },
+        {
+          "name": "متجر فلاتر",
+          "email": "falatersa@gmail.com",
+          "phone": "+966510325582",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tjw5fccjrSnnQr",
+          "time": "12:19:50 am"
+        }
+      ]
+    },
+    "4/10/2026": {
+      "count": 3,
+      "revenue": 597,
+      "plans": {
+        "MONTHLY": 3,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "rupesh shah",
+          "email": "kataria.auction@gmail.com",
+          "phone": "+917048157764",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tjl4oiPgwsjBCd",
+          "time": "1:33:24 pm"
+        },
+        {
+          "name": "Sitai Hospital",
+          "email": "sitaihospitalofficial@gmail.com",
+          "phone": "+918446217105",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tjk9dBTWNzbkZy",
+          "time": "12:39:16 pm"
+        },
+        {
+          "name": "Rapwide updates",
+          "email": "charlleysmart@gmail.com",
+          "phone": "+2348060769679",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TjjEfUjiFfgUvD",
+          "time": "11:45:20 am"
+        }
+      ]
+    },
+    "3/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Subash Chandra bose",
+          "email": "netajibose2020@gmail.com",
+          "phone": "+919791754353",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TjWnlhiv0tb7eJ",
+          "time": "11:35:33 pm"
+        }
+      ]
+    },
+    "2/10/2026": {
+      "count": 1,
+      "revenue": 199,
+      "plans": {
+        "MONTHLY": 1,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "All Online",
+          "email": "onlinetraining108@gmail.com",
+          "phone": "+918015443932",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_Tj8ayv8Zo3pA3B",
+          "time": "11:54:48 pm"
+        }
+      ]
+    },
+    "1/10/2026": {
+      "count": 2,
+      "revenue": 398,
+      "plans": {
+        "MONTHLY": 2,
+        "YEARLY": 0,
+        "LIFETIME": 0
+      },
+      "customers": [
+        {
+          "name": "Phone Book",
+          "email": "phonebook450@gmail.com",
+          "phone": "+233207777165",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TiZrmlWfqBeiUe",
+          "time": "1:56:26 pm"
+        },
+        {
+          "name": "Alpha",
+          "email": "dalpha5610@gmail.com",
+          "phone": "+22656102626",
+          "plan": "MONTHLY",
+          "amount": 199,
+          "paymentId": "pay_TiNv46jhkO5SXg",
+          "time": "2:15:13 am"
+        }
+      ]
+    }
+  },
+  "ordersList": [
+    {
+      "orderNumber": 1,
+      "paymentId": "pay_Tu0wPm9GeCuFow",
+      "dateIST": "30/10/2026, 11:34:33 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Guriya Devi",
+      "email": "guriyakumaripatna9@gmail.com",
+      "contact": "+919821577292",
+      "firestoreMatched": true,
+      "firestoreDocId": "NHqiW0E4GmbBY2gLDHHS3tAhmFg2"
+    },
+    {
+      "orderNumber": 2,
+      "paymentId": "pay_Tsdjn4ZuYtzuWf",
+      "dateIST": "27/10/2026, 12:13:39 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Kuldeep Singh",
+      "email": "shivrayhandicraft@gmail.com",
+      "contact": "+918824008238",
+      "firestoreMatched": true,
+      "firestoreDocId": "74dx9muK7CgMPUk0N964IqjQhVh1"
+    },
+    {
+      "orderNumber": 3,
+      "paymentId": "pay_TsZa3J2KwkJLl8",
+      "dateIST": "26/10/2026, 8:09:39 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "इंजी. कन्हैया बैरागी",
+      "email": "padwarkanhaiya@gmail.com",
+      "contact": "+919406674580",
+      "firestoreMatched": true,
+      "firestoreDocId": "7xqsczeSJXZW9YBzBaqGv0aVE1C2"
+    },
+    {
+      "orderNumber": 4,
+      "paymentId": "pay_TsYcbEV7eg9kkx",
+      "dateIST": "26/10/2026, 7:13:22 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Aman Singhla",
+      "email": "singhlaama@gmail.com",
+      "contact": "+919266711141",
+      "firestoreMatched": true,
+      "firestoreDocId": "d029Khpag7eindrcDnenZzdXIgl1"
+    },
+    {
+      "orderNumber": 5,
+      "paymentId": "pay_TsEOPD7gyTOeGY",
+      "dateIST": "25/10/2026, 11:26:04 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Padmasree Srirangam",
+      "email": "padmasree.srirangam24@gmail.com",
+      "contact": "+919493885225",
+      "firestoreMatched": true,
+      "firestoreDocId": "L05TVXyCyHhegWCpUvtJQbu8Kqw1"
+    },
+    {
+      "orderNumber": 6,
+      "paymentId": "pay_TryymTkq7touG0",
+      "dateIST": "25/10/2026, 8:21:24 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "gupta rakesh",
+      "email": "guptarakesh845415@gmail.com",
+      "contact": "+919006068924",
+      "firestoreMatched": true,
+      "firestoreDocId": "gUwK3Vz2ZEQlWek2zRi40eS37eK2"
+    },
+    {
+      "orderNumber": 7,
+      "paymentId": "pay_TrqO2ZhhFzW8N5",
+      "dateIST": "24/10/2026, 11:57:05 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Williams Fleming",
+      "email": "williamsfleming01@gmail.com",
+      "contact": "+2349161394629",
+      "firestoreMatched": true,
+      "firestoreDocId": "ZXBLfgYMeEc42y2DqzWSpmLUJg32"
+    },
+    {
+      "orderNumber": 8,
+      "paymentId": "pay_Tra2k3AS8HNpIC",
+      "dateIST": "24/10/2026, 7:57:49 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Juan Toro",
+      "email": "jtoro1850@gmail.com",
+      "contact": "+584123618943",
+      "firestoreMatched": true,
+      "firestoreDocId": "INysF1AI6tQE2ZiUwO3zVKUiH392"
+    },
+    {
+      "orderNumber": 9,
+      "paymentId": "pay_TqVzqfFKvRD0L9",
+      "dateIST": "21/10/2026, 3:21:18 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Abdula Khan Ramdiya",
+      "email": "aisanakhana910@gmail.com",
+      "contact": "+917073508273",
+      "firestoreMatched": true,
+      "firestoreDocId": "Usas36ntqTV48pCbkhocwbuYZWh2"
+    },
+    {
+      "orderNumber": 10,
+      "paymentId": "pay_TqBAdR2Z5M6iQc",
+      "dateIST": "20/10/2026, 6:58:57 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Cesar Gonzalez",
+      "email": "rocsro@gmail.com",
+      "contact": "+56962565031",
+      "firestoreMatched": true,
+      "firestoreDocId": "bTyFeOFPWFPAFJLigAExzMfJupx1"
+    },
+    {
+      "orderNumber": 11,
+      "paymentId": "pay_TqAxYHHhzWj9f1",
+      "dateIST": "20/10/2026, 6:46:34 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Amerr",
+      "email": "almoatsem123@gmail.com",
+      "contact": "+967777962362",
+      "firestoreMatched": true,
+      "firestoreDocId": "1KU6zeg6KlcPEQFlPQtaWkMONJ73"
+    },
+    {
+      "orderNumber": 12,
+      "paymentId": "pay_Tq5WVAKQAnFAZO",
+      "dateIST": "20/10/2026, 1:27:29 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Chetan D Panchal",
+      "email": "chetan.panchal3@gmail.com",
+      "contact": "+919413567802",
+      "firestoreMatched": true,
+      "firestoreDocId": "FNK8fvGnbnbPhFbE4rvNbnVmrLG2"
+    },
+    {
+      "orderNumber": 13,
+      "paymentId": "pay_Tq5LvDzAagV4JM",
+      "dateIST": "20/10/2026, 1:17:28 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "P.j. photo's",
+      "email": "chouhanpankaj573@gmail.com",
+      "contact": "+917984754838",
+      "firestoreMatched": true,
+      "firestoreDocId": "T9y7b7wFrVMtlfedLmpLF36JIa82"
+    },
+    {
+      "orderNumber": 14,
+      "paymentId": "pay_Tpzpt85hYTINDV",
+      "dateIST": "20/10/2026, 7:53:41 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Kayfounise",
+      "email": "kayfounise19@gmail.com",
+      "contact": "+50932356837",
+      "firestoreMatched": true,
+      "firestoreDocId": "yMkiUhlhBkgHPlGmFNhEDDT41Av2"
+    },
+    {
+      "orderNumber": 15,
+      "paymentId": "pay_TphoSFQttuPwgG",
+      "dateIST": "19/10/2026, 2:15:50 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "chhotu singh",
+      "email": "chhotusinghskp43@gmail.com",
+      "contact": "+919565957756",
+      "firestoreMatched": true,
+      "firestoreDocId": "88rv5lV3ssbBDVrT3WJEpAg0KKG3"
+    },
+    {
+      "orderNumber": 16,
+      "paymentId": "pay_TpVLIyKF3VgE0v",
+      "dateIST": "19/10/2026, 2:03:55 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Ravindra Janaseva Kendra",
+      "email": "ravindrajanaseva@gmail.com",
+      "contact": "+918218097098",
+      "firestoreMatched": true,
+      "firestoreDocId": "c6bARmUJDEe0CmSvRfb3JTMVPSp1"
+    },
+    {
+      "orderNumber": 17,
+      "paymentId": "pay_ToVaRzQFX2eSmn",
+      "dateIST": "16/10/2026, 1:39:15 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "miztajhay Business",
+      "email": "miztajhaybusiness@gmail.com",
+      "contact": "+233503548244",
+      "firestoreMatched": true,
+      "firestoreDocId": "9I2n2RZZwUcvQlk7pXrQR2Pkq3G2"
+    },
+    {
+      "orderNumber": 18,
+      "paymentId": "pay_ToAZ2aavU2EZxU",
+      "dateIST": "15/10/2026, 5:05:21 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "S S fatake Bazar",
+      "email": "ssfatakebazar@gmail.com",
+      "contact": "+918459045446",
+      "firestoreMatched": true,
+      "firestoreDocId": "zhfLkhuLzngFC49QN70g3aWnitC2"
+    },
+    {
+      "orderNumber": 19,
+      "paymentId": "pay_To3UHpcoVQlu5T",
+      "dateIST": "15/10/2026, 10:10:00 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Radio Parbhani 90.8",
+      "email": "radioparbhani@gmail.com",
+      "contact": "+917790090034",
+      "firestoreMatched": true,
+      "firestoreDocId": "gcZ0OHJRmSMLwzYrzQZl91LB6dq1"
+    },
+    {
+      "orderNumber": 20,
+      "paymentId": "pay_TnjMaPYESgjfrm",
+      "dateIST": "14/10/2026, 2:28:50 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "ASDFG LKJH",
+      "email": "asdfglkjh8875@gmail.com",
+      "contact": "+8801571091735",
+      "firestoreMatched": true,
+      "firestoreDocId": "5fV8aiwAM1UCa6qalIUxBQukbcc2"
+    },
+    {
+      "orderNumber": 21,
+      "paymentId": "pay_TnIyjZgZnmkKGn",
+      "dateIST": "13/10/2026, 12:40:13 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Meraback Up",
+      "email": "merabacku@gmail.com",
+      "contact": "+917000813142",
+      "firestoreMatched": true,
+      "firestoreDocId": "8BNyJCfvdtcC7Mz75xu6tj66RGq2"
+    },
+    {
+      "orderNumber": 22,
+      "paymentId": "pay_TnIvAEvo8rvfbO",
+      "dateIST": "13/10/2026, 12:36:51 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Sudarshan Khoje",
+      "email": "sudarshankhoje0@gmail.com",
+      "contact": "+917743852033",
+      "firestoreMatched": true,
+      "firestoreDocId": "lcvbSqOvVBVkhYDrGFoZ3bvKByx2"
+    },
+    {
+      "orderNumber": 23,
+      "paymentId": "pay_TmJWu6vRJIDL5M",
+      "dateIST": "11/10/2026, 12:33:34 am",
+      "amount": 1999,
+      "plan": "LIFETIME",
+      "customerName": "Anand",
+      "email": "anand.shrivastav1252@gmail.com",
+      "contact": "+918290001252",
+      "firestoreMatched": true,
+      "firestoreDocId": "noJVJUcExgapipLK4FNMgrYyFvt2"
+    },
+    {
+      "orderNumber": 24,
+      "paymentId": "pay_TlrtEGx0QpoQ0b",
+      "dateIST": "9/10/2026, 9:31:17 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "The Sunday Music",
+      "email": "thesundaymusic2@gmail.com",
+      "contact": "+919914956918",
+      "firestoreMatched": true,
+      "firestoreDocId": "TZHh5IfhxWPYGt11nT0hO9xj0cj1"
+    },
+    {
+      "orderNumber": 25,
+      "paymentId": "pay_TlfXiRo8CKyev3",
+      "dateIST": "9/10/2026, 9:26:36 am",
+      "amount": 999,
+      "plan": "YEARLY",
+      "customerName": "Mahendra Ateria",
+      "email": "mahendra.123jabalpur@gmail.com",
+      "contact": "+919770304174",
+      "firestoreMatched": true,
+      "firestoreDocId": "faNfLfVBnTTUbhPyAkpvqypKmGw1"
+    },
+    {
+      "orderNumber": 26,
+      "paymentId": "pay_TlSKTTvtR5gBWv",
+      "dateIST": "8/10/2026, 8:31:03 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "phonefab",
+      "email": "phonefabmail@gmail.com",
+      "contact": "+918434847172",
+      "firestoreMatched": true,
+      "firestoreDocId": "94P4FT39ERfVWA4twFSwom6Bzbx2"
+    },
+    {
+      "orderNumber": 27,
+      "paymentId": "pay_Tl03ESY341bVdY",
+      "dateIST": "7/10/2026, 4:51:18 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Anawanti Clarisa",
+      "email": "anawanticlarissa@gmail.com",
+      "contact": "+2347034900024",
+      "firestoreMatched": true,
+      "firestoreDocId": "ENGyndXViERmjEXj7BYZze4zpbr2"
+    },
+    {
+      "orderNumber": 28,
+      "paymentId": "pay_TkNCfouXLJccYx",
+      "dateIST": "6/10/2026, 2:51:11 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "samuel isme",
+      "email": "samuelisme19@gmail.com",
+      "contact": "+50938350749",
+      "firestoreMatched": true,
+      "firestoreDocId": "sUmQVB6f6ud3U3GrZtXSLsBQFAe2"
+    },
+    {
+      "orderNumber": 29,
+      "paymentId": "pay_TkGbf67HxlLUgd",
+      "dateIST": "5/10/2026, 8:23:59 pm",
+      "amount": 1999,
+      "plan": "LIFETIME",
+      "customerName": "Makuochukwu Ohabueze",
+      "email": "ohabuezemakuochukwu@gmail.com",
+      "contact": "+2348162669082",
+      "firestoreMatched": true,
+      "firestoreDocId": "JhggvoJobtNjNHYhOiJxKW5vBjc2"
+    },
+    {
+      "orderNumber": 30,
+      "paymentId": "pay_Tjw5fccjrSnnQr",
+      "dateIST": "5/10/2026, 12:19:50 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "متجر فلاتر",
+      "email": "falatersa@gmail.com",
+      "contact": "+966510325582",
+      "firestoreMatched": true,
+      "firestoreDocId": "OW4dRo0Fc9Ss39olYTe9cVDjE5c2"
+    },
+    {
+      "orderNumber": 31,
+      "paymentId": "pay_Tjl4oiPgwsjBCd",
+      "dateIST": "4/10/2026, 1:33:24 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "rupesh shah",
+      "email": "kataria.auction@gmail.com",
+      "contact": "+917048157764",
+      "firestoreMatched": true,
+      "firestoreDocId": "rlmGNE90WPRKqYKv2U9eTWWiOEx1"
+    },
+    {
+      "orderNumber": 32,
+      "paymentId": "pay_Tjk9dBTWNzbkZy",
+      "dateIST": "4/10/2026, 12:39:16 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Sitai Hospital",
+      "email": "sitaihospitalofficial@gmail.com",
+      "contact": "+918446217105",
+      "firestoreMatched": true,
+      "firestoreDocId": "0TQYLi3s1ffrVf15l7ZgWtdPbNw1"
+    },
+    {
+      "orderNumber": 33,
+      "paymentId": "pay_TjjEfUjiFfgUvD",
+      "dateIST": "4/10/2026, 11:45:20 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Rapwide updates",
+      "email": "charlleysmart@gmail.com",
+      "contact": "+2348060769679",
+      "firestoreMatched": true,
+      "firestoreDocId": "szeYO4Pl1qUFoE0lQ8McAhZwkxv1"
+    },
+    {
+      "orderNumber": 34,
+      "paymentId": "pay_TjWnlhiv0tb7eJ",
+      "dateIST": "3/10/2026, 11:35:33 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Subash Chandra bose",
+      "email": "netajibose2020@gmail.com",
+      "contact": "+919791754353",
+      "firestoreMatched": true,
+      "firestoreDocId": "qoYrbAMj3pcC9wA8J96wgIjTzvR2"
+    },
+    {
+      "orderNumber": 35,
+      "paymentId": "pay_Tj8ayv8Zo3pA3B",
+      "dateIST": "2/10/2026, 11:54:48 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "All Online",
+      "email": "onlinetraining108@gmail.com",
+      "contact": "+918015443932",
+      "firestoreMatched": true,
+      "firestoreDocId": "8yx3xeSnmyYmNOJ95tVA9hsx2Dr2"
+    },
+    {
+      "orderNumber": 36,
+      "paymentId": "pay_TiZrmlWfqBeiUe",
+      "dateIST": "1/10/2026, 1:56:26 pm",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Phone Book",
+      "email": "phonebook450@gmail.com",
+      "contact": "+233207777165",
+      "firestoreMatched": true,
+      "firestoreDocId": "zgLwVQ5d8rYZcM7bG8Pu7vS1lbN2"
+    },
+    {
+      "orderNumber": 37,
+      "paymentId": "pay_TiNv46jhkO5SXg",
+      "dateIST": "1/10/2026, 2:15:13 am",
+      "amount": 199,
+      "plan": "MONTHLY",
+      "customerName": "Alpha",
+      "email": "dalpha5610@gmail.com",
+      "contact": "+22656102626",
+      "firestoreMatched": true,
+      "firestoreDocId": "USfRMEY3MmZsm1YsuTe2cqiCjAA2"
+    }
+  ]
+}

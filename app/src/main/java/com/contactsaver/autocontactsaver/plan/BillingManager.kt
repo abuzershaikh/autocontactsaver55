@@ -7,9 +7,6 @@ import com.android.billingclient.api.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/**
- * Manager for handling Google Play Billing operations
- */
 class BillingManager(
     private val context: Context,
     private val onPurchaseCompleted: (PlanType) -> Unit,
@@ -23,9 +20,7 @@ class BillingManager(
         private const val TAG = "BillingManager"
     }
 
-    /**
-     * Initialize billing client
-     */
+    
     fun initialize() {
         billingClient = BillingClient.newBuilder(context)
             .setListener(this)
@@ -49,14 +44,12 @@ class BillingManager(
 
             override fun onBillingServiceDisconnected() {
                 Log.d(TAG, "Billing service disconnected")
-                // Retry connection if needed
+                
             }
         })
     }
 
-    /**
-     * Query available products from Play Store
-     */
+    
     private fun queryProducts() {
         val productIds = PlanType.values().map { it.productId }
         
@@ -82,9 +75,7 @@ class BillingManager(
         }
     }
 
-    /**
-     * Query existing purchases
-     */
+    
     private fun queryPurchases() {
         billingClient?.queryPurchasesAsync(
             QueryPurchasesParams.newBuilder()
@@ -99,9 +90,7 @@ class BillingManager(
         }
     }
 
-    /**
-     * Launch purchase flow for a specific plan
-     */
+    
     fun launchPurchaseFlow(activity: Activity, planType: PlanType) {
         val productDetails = productList.find { it.productId == planType.productId }
         
@@ -123,9 +112,7 @@ class BillingManager(
         billingClient?.launchBillingFlow(activity, billingFlowParams)
     }
 
-    /**
-     * Handle purchase updates
-     */
+    
     override fun onPurchasesUpdated(billingResult: BillingResult, purchases: List<Purchase>?) {
         if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchases != null) {
             for (purchase in purchases) {
@@ -138,17 +125,15 @@ class BillingManager(
         }
     }
 
-    /**
-     * Handle a completed purchase
-     */
+    
     private fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
-            // Acknowledge the purchase if not already acknowledged
+            
             if (!purchase.isAcknowledged) {
                 acknowledgePurchase(purchase)
             }
 
-            // Find which plan was purchased
+            
             val planType = PlanType.values().find { 
                 purchase.products.contains(it.productId) 
             }
@@ -159,9 +144,7 @@ class BillingManager(
         }
     }
 
-    /**
-     * Acknowledge the purchase
-     */
+    
     private fun acknowledgePurchase(purchase: Purchase) {
         val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
             .setPurchaseToken(purchase.purchaseToken)
@@ -174,9 +157,7 @@ class BillingManager(
         }
     }
 
-    /**
-     * Check if user has active subscription
-     */
+    
     suspend fun hasActivePurchase(): Boolean = withContext(Dispatchers.IO) {
         var hasActive = false
         billingClient?.queryPurchasesAsync(
@@ -191,9 +172,7 @@ class BillingManager(
         hasActive
     }
 
-    /**
-     * Release billing client resources
-     */
+    
     fun release() {
         billingClient?.endConnection()
         billingClient = null

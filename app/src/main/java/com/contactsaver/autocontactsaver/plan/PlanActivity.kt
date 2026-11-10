@@ -3,11 +3,19 @@ package com.contactsaver.autocontactsaver.plan
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
+import com.razorpay.Checkout
+import com.razorpay.PaymentData
+import com.razorpay.PaymentResultWithDataListener
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import kotlinx.coroutines.launch
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
@@ -43,7 +51,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// ─── Premium Color Palette ───────────────────────────────────────
 private val DeepNavy = Color(0xFF0A0E21)
 private val DarkSurface = Color(0xFF111328)
 private val CardDark = Color(0xFF1A1D35)
@@ -65,13 +72,8 @@ private val TextWhite = Color(0xFFF5F5F5)
 private val TextMuted = Color(0xFF8E91A8)
 private val TextSubtle = Color(0xFF5C5F7E)
 
-/**
- * Activity for displaying and purchasing subscription plans
- * Premium dark-themed UI with vibrant gradients and glassmorphism
- */
-class PlanActivity : ComponentActivity() {
+class PlanActivity : ComponentActivity(), PaymentResultWithDataListener {
 
-    private lateinit var billingManager: BillingManager
     private var selectedPlan by mutableStateOf<PlanType?>(null)
     private var isPurchasing by mutableStateOf(false)
 
@@ -91,21 +93,8 @@ class PlanActivity : ComponentActivity() {
         window.statusBarColor = android.graphics.Color.BLACK
         window.navigationBarColor = android.graphics.Color.BLACK
 
-        // Initialize billing manager
-        billingManager = BillingManager(
-            context = this,
-            onPurchaseCompleted = { planType ->
-                isPurchasing = false
-                savePurchasedPlan(planType)
-                showToast("✅ ${planType.planName} activated successfully!")
-                finish()
-            },
-            onPurchaseFailed = { error ->
-                isPurchasing = false
-                showToast("❌ $error")
-            }
-        )
-        billingManager.initialize()
+        
+        RazorpayManager.initialize(this)
 
         setContent {
             MaterialTheme {
@@ -118,7 +107,7 @@ class PlanActivity : ComponentActivity() {
     fun PremiumPlanScreen() {
         val infiniteTransition = rememberInfiniteTransition(label = "bg")
 
-        // Animated gradient shift for background
+        
         val gradientOffset by infiniteTransition.animateFloat(
             initialValue = 0f,
             targetValue = 600f,
@@ -129,7 +118,7 @@ class PlanActivity : ComponentActivity() {
             label = "gradShift"
         )
 
-        // Pulsing glow
+        
         val glowAlpha by infiniteTransition.animateFloat(
             initialValue = 0.05f,
             targetValue = 0.15f,
@@ -140,7 +129,7 @@ class PlanActivity : ComponentActivity() {
             label = "glow"
         )
 
-        // Rotating decorative element
+        
         val rotation by infiniteTransition.animateFloat(
             initialValue = 0f,
             targetValue = 360f,
@@ -164,8 +153,8 @@ class PlanActivity : ComponentActivity() {
                     )
                 )
         ) {
-            // ── Decorative Background Elements ──
-            // Top-right glow orb
+            
+            
             Box(
                 modifier = Modifier
                     .size(300.dp)
@@ -180,7 +169,7 @@ class PlanActivity : ComponentActivity() {
                     )
             )
 
-            // Bottom-left glow orb
+            
             Box(
                 modifier = Modifier
                     .size(250.dp)
@@ -196,7 +185,7 @@ class PlanActivity : ComponentActivity() {
                     )
             )
 
-            // Center accent glow
+            
             Box(
                 modifier = Modifier
                     .size(200.dp)
@@ -220,17 +209,17 @@ class PlanActivity : ComponentActivity() {
                     .navigationBarsPadding()
                     .verticalScroll(rememberScrollState())
             ) {
-                // ── Top Bar ──
+                
                 PremiumTopBar()
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // ── Premium Header Section ──
+                
                 PremiumHeaderSection()
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Plan Cards ──
+                
                 Column(
                     modifier = Modifier.padding(horizontal = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(14.dp)
@@ -246,12 +235,12 @@ class PlanActivity : ComponentActivity() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Purchase Button ──
+                
                 PremiumPurchaseButton()
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // ── Terms ──
+                
                 Text(
                     text = "By purchasing, you agree to our Terms & Conditions",
                     fontSize = 11.sp,
@@ -264,7 +253,7 @@ class PlanActivity : ComponentActivity() {
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Features List ──
+                
                 PremiumFeaturesList()
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -280,7 +269,7 @@ class PlanActivity : ComponentActivity() {
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back button with glass effect
+            
             Box(
                 modifier = Modifier
                     .size(42.dp)
@@ -304,7 +293,7 @@ class PlanActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Premium badge
+            
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
@@ -376,9 +365,9 @@ class PlanActivity : ComponentActivity() {
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Crown icon with glow
+            
             Box(contentAlignment = Alignment.Center) {
-                // Glow behind crown
+                
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -391,7 +380,7 @@ class PlanActivity : ComponentActivity() {
                             shape = CircleShape
                         )
                 )
-                // Crown icon
+                
                 Box(
                     modifier = Modifier
                         .size(64.dp)
@@ -415,7 +404,7 @@ class PlanActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Title with gradient-like effect
+            
             Text(
                 text = "Unlock Premium",
                 fontSize = 28.sp,
@@ -508,7 +497,7 @@ class PlanActivity : ComponentActivity() {
             )
         }
 
-        // Badge info
+        
         val badgeText = when (planType) {
             PlanType.YEARLY -> "BEST VALUE"
             PlanType.LIFETIME -> "⭐ MOST POPULAR"
@@ -555,7 +544,7 @@ class PlanActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Plan icon
+                        
                         Box(
                             modifier = Modifier
                                 .size(50.dp)
@@ -573,7 +562,7 @@ class PlanActivity : ComponentActivity() {
 
                         Spacer(modifier = Modifier.width(14.dp))
 
-                        // Plan info
+                        
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = planType.planName,
@@ -614,7 +603,7 @@ class PlanActivity : ComponentActivity() {
                             )
                         }
 
-                        // Price column
+                        
                         Column(
                             horizontalAlignment = Alignment.End
                         ) {
@@ -641,7 +630,7 @@ class PlanActivity : ComponentActivity() {
 
                             Spacer(modifier = Modifier.height(6.dp))
 
-                            // Selection indicator
+                            
                             Box(
                                 modifier = Modifier
                                     .size(24.dp)
@@ -803,7 +792,19 @@ class PlanActivity : ComponentActivity() {
                             Modifier.clickable {
                                 selectedPlan?.let { plan ->
                                     isPurchasing = true
-                                    billingManager.launchPurchaseFlow(this@PlanActivity, plan)
+                                    try {
+                                        val userEmail = UserManager.getUserEmail(this@PlanActivity)
+                                        val userPhone = UserManager.getUserPhone(this@PlanActivity)
+                                        RazorpayManager.startPaymentFlow(
+                                            activity = this@PlanActivity,
+                                            planType = plan,
+                                            userEmail = userEmail,
+                                            userPhone = userPhone
+                                        )
+                                    } catch (e: Exception) {
+                                        isPurchasing = false
+                                        showToast("❌ Could not launch Razorpay: ${e.message}")
+                                    }
                                 }
                             }
                         } else if (selectedPlan == null) {
@@ -858,7 +859,7 @@ class PlanActivity : ComponentActivity() {
                 }
             }
 
-            // Secure payment note
+            
             if (selectedPlan != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -874,7 +875,7 @@ class PlanActivity : ComponentActivity() {
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Secured by Google Play",
+                        text = "Secured by Razorpay Payment Gateway",
                         fontSize = 11.sp,
                         color = TextSubtle,
                         fontWeight = FontWeight.Medium
@@ -884,24 +885,92 @@ class PlanActivity : ComponentActivity() {
         }
     }
 
-    private fun savePurchasedPlan(planType: PlanType) {
+    override fun onPaymentSuccess(razorpayPaymentId: String?, paymentData: PaymentData?) {
+        isPurchasing = false
+        val paymentId = paymentData?.paymentId ?: razorpayPaymentId ?: "PAY_${System.currentTimeMillis()}"
+
+        Log.d("PlanActivity", "Payment Success! Payment ID: $paymentId")
+
+        
+        val prefs = getSharedPreferences("subscription_prefs", Context.MODE_PRIVATE)
+        val savedPlanName = prefs.getString("last_selected_plan", null)
+        val targetPlan = selectedPlan ?: savedPlanName?.let { 
+            try { PlanType.valueOf(it) } catch (e: Exception) { null } 
+        } ?: PlanType.LIFETIME
+
+        
+        savePurchasedPlan(targetPlan, paymentId)
+        showToast("🎉 ${targetPlan.planName} Activated Successfully!")
+
+        val resultIntent = Intent()
+        resultIntent.putExtra("is_premium", true)
+        resultIntent.putExtra("active_plan", targetPlan.name)
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
+
+    override fun onPaymentError(errorCode: Int, response: String?, paymentData: PaymentData?) {
+        isPurchasing = false
+        Log.e("PlanActivity", "Payment Failed! Code: $errorCode, Response: $response")
+        val message = when (errorCode) {
+            Checkout.PAYMENT_CANCELED -> "Payment cancelled by user"
+            Checkout.NETWORK_ERROR -> "Network error. Please check your connection."
+            else -> "Payment failed: ${response ?: "Unknown error"}"
+        }
+        showToast("❌ $message")
+    }
+
+    private fun savePurchasedPlan(planType: PlanType, paymentId: String = "") {
         val prefs = getSharedPreferences("subscription_prefs", Context.MODE_PRIVATE)
         val purchaseTime = System.currentTimeMillis()
+        
         
         prefs.edit().apply {
             putString("active_plan", planType.name)
             putLong("purchase_time", purchaseTime)
             putBoolean("is_premium", true)
+            remove("last_selected_plan")
             apply()
+        }
+        Log.d("PlanActivity", "Saved ${planType.name} in subscription_prefs locally")
+
+        
+        val userId = UserManager.getCurrentUserId()
+        if (!userId.isNullOrEmpty()) {
+            lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+                
+                try {
+                    UserManager.upgradeToPremium(userId, planType, paymentId)
+                    Log.d("PlanActivity", "Upgraded $userId to ${planType.name} in Firestore via SDK")
+                } catch (e: Exception) {
+                    Log.e("PlanActivity", "Error syncing plan to Firestore via SDK: ${e.message}")
+                }
+
+                
+                try {
+                    val client = okhttp3.OkHttpClient()
+                    val mediaType = "application/json; charset=utf-8".toMediaType()
+                    val jsonBody = org.json.JSONObject().apply {
+                        put("userId", userId)
+                        put("planId", planType.name)
+                        put("razorpay_payment_id", paymentId)
+                    }
+                    val body = jsonBody.toString().toRequestBody(mediaType)
+                    val request = okhttp3.Request.Builder()
+                        .url("${RazorpayManager.WORKER_URL}/verify-payment")
+                        .post(body)
+                        .build()
+
+                    val response = client.newCall(request).execute()
+                    Log.d("PlanActivity", "Cloudflare Worker verify-payment response: ${response.code}")
+                } catch (e: Exception) {
+                    Log.e("PlanActivity", "Worker API call failed: ${e.message}")
+                }
+            }
         }
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        billingManager.release()
     }
 }

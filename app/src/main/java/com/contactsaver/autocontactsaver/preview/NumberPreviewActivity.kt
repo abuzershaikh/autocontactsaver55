@@ -111,10 +111,7 @@ class NumberPreviewActivity : ComponentActivity() {
     }
 
     companion object {
-        /**
-         * Create an intent to launch NumberPreviewActivity.
-         * Any extraction method (OCR, Chat, Group, Call) can use this.
-         */
+        
         fun createIntent(
             context: Context,
             numbers: List<String>
@@ -126,7 +123,6 @@ class NumberPreviewActivity : ComponentActivity() {
     }
 }
 
-// ─── Color Palette (matches MainActivity green theme) ────────────
 private val BgGradientTop = Color(0xFFE8F5E9)
 private val BgGradientMid = Color(0xFFF1F8E9)
 private val BgGradientBottom = Color(0xFFF9FBF2)
@@ -140,7 +136,6 @@ private val TextDark = Color(0xFF1B1B1B)
 private val TextSecondary = Color(0xFF616161)
 private val TextMuted = Color(0xFF9E9E9E)
 
-// ─── Main Screen ─────────────────────────────────────────────────
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NumberPreviewScreen(
@@ -153,58 +148,95 @@ private fun NumberPreviewScreen(
     var startFrom by remember { mutableIntStateOf(1) }
     val selectedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(numbers.size) { true }) } }
     var showTrialLimitDialog by remember { mutableStateOf(false) }
-    var previewTrialReservationChecked by rememberSaveable { mutableStateOf(false) }
-    var previewSaveAllowed by rememberSaveable { mutableStateOf(false) }
+    var showPartialSaveDialog by remember { mutableStateOf(false) }
+    var partialSaveRequestedCount by remember { mutableIntStateOf(0) }
+    var partialSaveRemainingCount by remember { mutableIntStateOf(0) }
+    var pendingSaveAction by remember { mutableStateOf<((List<String>, List<Boolean>) -> Unit)?>(null) }
 
-    LaunchedEffect(numbers.size) {
-        if (previewTrialReservationChecked) return@LaunchedEffect
-        previewTrialReservationChecked = true
-
-        val userId = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserId()
-        if (userId != null) {
-            val isPremium = com.contactsaver.autocontactsaver.plan.UserManager.isPremiumUser(userId)
-                .getOrDefault(false)
-
-            if (isPremium) {
-                previewSaveAllowed = true
+    val requestSave: ((List<String>, List<Boolean>) -> Unit) -> Unit = { action ->
+        scope.launch {
+            val userId = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserId()
+            val isPremium = userId?.let { com.contactsaver.autocontactsaver.plan.UserManager.isPremiumUser(it).getOrDefault(false) } ?: true
+            val selectedCount = selectedStates.count { it }
+            
+            if (isPremium || userId == null) {
+                action(numbers, selectedStates.toList())
             } else {
-                val canReserve = com.contactsaver.autocontactsaver.plan.UserManager.canSaveContacts(
-                    userId,
-                    requestedCount = numbers.size
-                ).getOrDefault(false)
-
-                if (canReserve) {
-                    val reserveResult = com.contactsaver.autocontactsaver.plan.UserManager.incrementContactsSaved(
-                        userId = userId,
-                        count = numbers.size
-                    )
-
-                    previewSaveAllowed = reserveResult.isSuccess
-                    if (!reserveResult.isSuccess) {
+                val remaining = com.contactsaver.autocontactsaver.plan.UserManager.getRemainingTrialContacts(userId).getOrDefault(0)
+                if (remaining >= selectedCount) {
+                    val reserveResult = com.contactsaver.autocontactsaver.plan.UserManager.incrementContactsSaved(userId, selectedCount)
+                    if (reserveResult.isSuccess) {
+                        action(numbers, selectedStates.toList())
+                    } else {
                         showTrialLimitDialog = true
                     }
+                } else if (remaining > 0) {
+                    partialSaveRequestedCount = selectedCount
+                    partialSaveRemainingCount = remaining
+                    pendingSaveAction = action
+                    showPartialSaveDialog = true
                 } else {
-                    previewSaveAllowed = false
                     showTrialLimitDialog = true
                 }
             }
-        } else {
-            previewSaveAllowed = true
         }
     }
     
-    // Preview screen already reserves trial quota for signed-in trial users.
-    val checkTrialLimitAndSave: (Int, suspend () -> Unit) -> Unit = { _, saveAction ->
-        scope.launch {
-            if (previewSaveAllowed) {
-                saveAction()
-            } else {
-                showTrialLimitDialog = true
+    
+    if (showPartialSaveDialog) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { showPartialSaveDialog = false },
+            title = {
+                Text(
+                    text = "Partial Save",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                Text(
+                    text = "You selected $partialSaveRequestedCount contacts, but you only have $partialSaveRemainingCount free trial saves left.\n\nOnly the first $partialSaveRemainingCount selected contacts will be saved. Upgrade to premium for unlimited saves.\n\nDo you want to continue?",
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showPartialSaveDialog = false
+                        scope.launch {
+                            val userId = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserId() ?: return@launch
+                            val reserveResult = com.contactsaver.autocontactsaver.plan.UserManager.incrementContactsSaved(userId, partialSaveRemainingCount)
+                            if (reserveResult.isSuccess) {
+                                var counted = 0
+                                val newSelectedStates = selectedStates.map { isSelected ->
+                                    if (isSelected && counted < partialSaveRemainingCount) {
+                                        counted++
+                                        true
+                                    } else false
+                                }
+                                newSelectedStates.forEachIndexed { i, state -> selectedStates[i] = state }
+                                pendingSaveAction?.invoke(numbers, newSelectedStates)
+                                android.widget.Toast.makeText(context, "Saved $partialSaveRemainingCount contacts due to trial limit.", android.widget.Toast.LENGTH_LONG).show()
+                            } else {
+                                showTrialLimitDialog = true
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+                ) {
+                    Text("Save $partialSaveRemainingCount Contacts", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                androidx.compose.material3.TextButton(onClick = { showPartialSaveDialog = false }) {
+                    Text("Cancel", color = TextMuted)
+                }
             }
-        }
+        )
     }
+
     
-    // Trial Limit Dialog
     if (showTrialLimitDialog) {
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { showTrialLimitDialog = false },
@@ -245,7 +277,7 @@ private fun NumberPreviewScreen(
                     Button(
                     onClick = {
                         showTrialLimitDialog = false
-                        // Open PlanActivity
+                        
                         val intent = android.content.Intent(
                             context,
                             com.contactsaver.autocontactsaver.plan.PlanActivity::class.java
@@ -313,14 +345,13 @@ private fun NumberPreviewScreen(
             },
             bottomBar = {
                 SaveFormatBar(
-                    numbers = numbers,
-                    seriesName = seriesName,
-                    startFrom = startFrom,
-                    selectedStates = selectedStates,
-                    previewSaveAllowed = previewSaveAllowed,
-                    onUpgradeRequired = { showTrialLimitDialog = true },
-                    onSaveClick = checkTrialLimitAndSave
-                )
+                numbers = numbers,
+                seriesName = seriesName,
+                startFrom = startFrom,
+                selectedStates = selectedStates,
+                onRequestSave = requestSave,
+                onUpgradeRequired = { showTrialLimitDialog = true }
+            )
             }
         ) { innerPadding ->
             Column(
@@ -332,7 +363,7 @@ private fun NumberPreviewScreen(
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // ── Series Name & Start From ──
+                
                 SeriesInputRow(
                     seriesName = seriesName,
                     onSeriesNameChange = { seriesName = it },
@@ -342,7 +373,7 @@ private fun NumberPreviewScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // ── Number List ──
+                
                 NumberList(
                     numbers = numbers,
                     seriesName = seriesName,
@@ -357,7 +388,6 @@ private fun NumberPreviewScreen(
     }
 }
 
-// ─── Series Name & Start From Input Row ──────────────────────────
 @Composable
 private fun SeriesInputRow(
     seriesName: String,
@@ -379,7 +409,7 @@ private fun SeriesInputRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Series Name
+                
                 Column(modifier = Modifier.weight(1.6f)) {
                     Text(
                         text = "Series Name",
@@ -409,7 +439,7 @@ private fun SeriesInputRow(
                     )
                 }
 
-                // Start From
+                
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = "Start From",
@@ -451,7 +481,6 @@ private fun SeriesInputRow(
     }
 }
 
-// ─── Number List ─────────────────────────────────────────────────
 @Composable
 private fun NumberList(
     numbers: List<String>,
@@ -475,14 +504,13 @@ private fun NumberList(
             )
         }
 
-        // Bottom spacing for the save bar
+        
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
 
-// ─── Single Number Row ───────────────────────────────────────────
 @Composable
 private fun NumberRow(
     number: String,
@@ -519,7 +547,7 @@ private fun NumberRow(
                 .padding(horizontal = 10.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Phone number section
+            
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -540,7 +568,7 @@ private fun NumberRow(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Series name section
+            
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -561,7 +589,7 @@ private fun NumberRow(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            // Checkbox
+            
             Box(
                 modifier = Modifier
                     .size(28.dp)
@@ -580,18 +608,17 @@ private fun NumberRow(
     }
 }
 
-// ─── Bottom Save Bar ─────────────────────────────────────────────
 @Composable
 private fun SaveFormatBar(
     numbers: List<String>,
     seriesName: String,
     startFrom: Int,
     selectedStates: List<Boolean>,
-    previewSaveAllowed: Boolean,
-    onUpgradeRequired: () -> Unit,
-    onSaveClick: (Int, suspend () -> Unit) -> Unit
+    onRequestSave: ((List<String>, List<Boolean>) -> Unit) -> Unit,
+    onUpgradeRequired: () -> Unit
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Card(
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
@@ -605,7 +632,7 @@ private fun SaveFormatBar(
                 .navigationBarsPadding()
                 .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
-            // Selected count
+            
             val selectedCount = selectedStates.count { it }
             Text(
                 text = "$selectedCount of ${numbers.size} contacts selected",
@@ -619,7 +646,7 @@ private fun SaveFormatBar(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Save as CSV
+                
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -633,25 +660,23 @@ private fun SaveFormatBar(
                     Spacer(modifier = Modifier.height(8.dp))
                     SaveButton(
                         label = "CSV",
-                        containerColor = if (previewSaveAllowed) DarkGreen else TextMuted,
+                        containerColor = DarkGreen,
                         onClick = {
-                            if (previewSaveAllowed) {
+                            onRequestSave { currentNumbers, currentSelectedStates ->
                                 saveAsCsv(
                                     context = context,
-                                    numbers = numbers,
+                                    numbers = currentNumbers,
                                     seriesName = seriesName,
                                     startFrom = startFrom,
-                                    selectedStates = selectedStates,
+                                    selectedStates = currentSelectedStates,
                                     allowSave = true
                                 )
-                            } else {
-                                onUpgradeRequired()
                             }
                         }
                     )
                 }
 
-                // Save to Contacts (opens Gmail/Contacts app)
+                
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -664,16 +689,17 @@ private fun SaveFormatBar(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(
-                        enabled = previewSaveAllowed,
                         onClick = {
-                            onSaveClick(selectedCount) {
-                                saveToContacts(
-                                    context = context,
-                                    numbers = numbers,
-                                    seriesName = seriesName,
-                                    startFrom = startFrom,
-                                    selectedStates = selectedStates
-                                )
+                            onRequestSave { currentNumbers, currentSelectedStates ->
+                                scope.launch {
+                                    saveToContacts(
+                                        context = context,
+                                        numbers = currentNumbers,
+                                        seriesName = seriesName,
+                                        startFrom = startFrom,
+                                        selectedStates = currentSelectedStates
+                                    )
+                                }
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
@@ -730,7 +756,6 @@ private fun SaveButton(
     }
 }
 
-// ─── File Save Utilities ─────────────────────────────────────────
 private fun getSelectedContacts(
     numbers: List<String>,
     seriesName: String,
@@ -834,7 +859,7 @@ private suspend fun saveToContacts(
     }
 
     try {
-        // Create VCF in cache directory
+        
         val vcfDir = File(context.cacheDir, "vcf")
         if (!vcfDir.exists()) vcfDir.mkdirs()
 
@@ -851,14 +876,14 @@ private suspend fun saveToContacts(
             }
         }
 
-        // Get content URI via FileProvider
+        
         val contentUri: Uri = FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
             vcfFile
         )
 
-        // Launch contacts app to import VCF
+        
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(contentUri, "text/x-vcard")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

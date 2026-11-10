@@ -114,23 +114,22 @@ import com.contactsaver.autocontactsaver.plan.PlanActivity
 import com.contactsaver.autocontactsaver.plan.UserManager
 import kotlinx.coroutines.launch
 
-
 class MainActivity : ComponentActivity() {
 
     private lateinit var ocrProcessor: AutoSaveOcrProcessor
 
-    // SharedPreferences for first-time dialog
+    
     private val PREFS_NAME = "AppPreferences"
     private val KEY_FIRST_TIME = "isFirstTime"
 
-    // Multiple image picker launcher – picks multiple images from gallery, runs OCR, opens preview screen
+    
     private val multipleImagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetMultipleContents()
     ) { uris: List<Uri> ->
         if (uris.isNotEmpty()) {
             Toast.makeText(this, "Scanning ${uris.size} image(s)…", Toast.LENGTH_SHORT).show()
             
-            // Process all images and collect results
+            
             val allNumbers = mutableListOf<String>()
             var processedCount = 0
             
@@ -139,7 +138,7 @@ class MainActivity : ComponentActivity() {
                     processedCount++
                     allNumbers.addAll(result.extractedNumbers)
                     
-                    // When all images are processed
+                    
                     if (processedCount == uris.size) {
                         runOnUiThread {
                             if (allNumbers.isNotEmpty()) {
@@ -186,7 +185,7 @@ class MainActivity : ComponentActivity() {
                             if (agreed) {
                                 sharedPreferences.edit().putBoolean(KEY_FIRST_TIME, false).apply()
                             } else {
-                                finish() // Close app if user declines
+                                finish() 
                             }
                         }
                     )
@@ -203,7 +202,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// ─── Theme Colors ────────────────────────────────────────────────
 private val BgGradientTop = Color(0xFFE8F5E9)
 private val BgGradientBottom = Color(0xFFF1F8E9)
 private val PrimaryGreen = Color(0xFF43A047)
@@ -219,7 +217,6 @@ private val TextSecondary = Color(0xFF616161)
 private val TextMuted = Color(0xFF9E9E9E)
 private val DividerColor = Color(0xFFE0E0E0)
 
-// ─── Main Screen with Navigation Drawer ──────────────────────────
 @Composable
 private fun MainScreenWithDrawer(
     onScanClick: () -> Unit = {},
@@ -229,9 +226,9 @@ private fun MainScreenWithDrawer(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val context = androidx.compose.ui.platform.LocalContext.current
-    var showDialog by remember { mutableStateOf(isFirstTime) }
+    var showDialog by remember { mutableStateOf(isFirstTime && !com.contactsaver.autocontactsaver.plan.UserManager.guestModeActive) }
 
-    // First Time User Dialog
+    
     if (showDialog) {
         FirstTimeUserDialog(
             onAgree = {
@@ -241,6 +238,42 @@ private fun MainScreenWithDrawer(
             onDecline = {
                 showDialog = false
                 onFirstTimeDialogDismiss(false)
+            }
+        )
+    }
+
+    
+    var showAppUpdateDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        try {
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("app_settings")
+                .document("config")
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val latestVersion = document.getLong("latest_version")?.toInt() ?: 0
+                        val updateAction = document.getString("update_action") ?: "SOFT_UPDATE"
+                        val currentVersion = com.contactsaver.autocontactsaver.BuildConfig.VERSION_CODE
+                        
+                        if (latestVersion > currentVersion && updateAction != "NONE") {
+                            showAppUpdateDialog = true
+                        }
+                    }
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    if (showAppUpdateDialog) {
+        AppUpdateDialog(
+            onDismiss = { showAppUpdateDialog = false },
+            onUpdateClick = {
+                showAppUpdateDialog = false
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.contactsaver.autocontactsaver&pcampaignid=web_share"))
+                context.startActivity(intent)
             }
         )
     }
@@ -267,7 +300,6 @@ private fun MainScreenWithDrawer(
     }
 }
 
-// ─── Navigation Drawer Content ───────────────────────────────────
 @Composable
 private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.info.InfoPageType) -> Unit) {
     var isLegalExpanded by remember { mutableStateOf(false) }
@@ -287,16 +319,26 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                 userStatus = UserManager.getUserStatusMessage(userId)
                 isPremium = UserManager.isPremiumUser(userId).getOrDefault(false)
 
-                // Get user info from Firebase Auth
+                
                 val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-                userName = currentUser?.displayName
-                userEmail = currentUser?.email
+                if (UserManager.guestModeActive) {
+                    userName = "Guest User"
+                    userEmail = "guest8097@gmail.com"
+                } else {
+                    userName = currentUser?.displayName
+                    userEmail = currentUser?.email
+                }
                 userPhotoUrl = currentUser?.photoUrl?.toString()
             } catch (e: Exception) {
-                // If error, still show basic info from Auth
+                
                 val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-                userName = currentUser?.displayName
-                userEmail = currentUser?.email
+                if (UserManager.guestModeActive) {
+                    userName = "Guest User"
+                    userEmail = "guest8097@gmail.com"
+                } else {
+                    userName = currentUser?.displayName
+                    userEmail = currentUser?.email
+                }
                 userPhotoUrl = currentUser?.photoUrl?.toString()
                 userStatus = "Trial: Loading..."
                 isPremium = false
@@ -338,8 +380,9 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+                .verticalScroll(rememberScrollState())
         ) {
-            // ── Drawer Header with Profile ──
+            
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -356,7 +399,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                     )
                     .padding(horizontal = 24.dp, vertical = 32.dp)
             ) {
-                // Decorative circles
+                
                 Box(
                     modifier = Modifier
                         .size(80.dp)
@@ -375,12 +418,12 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                 )
 
                 Column {
-                    // User Profile Section
+                    
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        // User Profile Photo
+                        
                         Box(
                             modifier = Modifier
                                 .size(64.dp)
@@ -394,7 +437,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                             contentAlignment = Alignment.Center
                         ) {
                             if (userPhotoUrl != null) {
-                                // Load user photo from URL using Coil
+                                
                                 androidx.compose.foundation.layout.Box(
                                     modifier = Modifier.fillMaxSize()
                                 ) {
@@ -408,7 +451,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                                     )
                                 }
                             } else {
-                                // Default icon if no photo
+                                
                                 Icon(
                                     imageVector = Icons.Default.ContactPhone,
                                     contentDescription = null,
@@ -420,7 +463,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
 
                         Spacer(modifier = Modifier.width(16.dp))
 
-                        // User Info
+                        
                         Column(
                             modifier = Modifier.weight(1f)
                         ) {
@@ -456,12 +499,12 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // User Status Badge
+                    
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Version badge
+                        
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
@@ -476,15 +519,15 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                             )
                         }
 
-                        // Premium/Trial Badge
+                        
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(
                                     if (isPremium) 
-                                        Color(0xFFFFD700).copy(alpha = 0.9f) // Gold for premium
+                                        Color(0xFFFFD700).copy(alpha = 0.9f) 
                                     else 
-                                        Color(0xFF64B5F6).copy(alpha = 0.9f) // Blue for trial
+                                        Color(0xFF64B5F6).copy(alpha = 0.9f) 
                                 )
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
@@ -510,7 +553,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
 
                     Spacer(modifier = Modifier.height(6.dp))
 
-                    // User status text
+                    
                     Text(
                         text = userStatus,
                         fontSize = 11.sp,
@@ -532,7 +575,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ── General Section ──
+            
             DrawerMenuItem(
                 icon = Icons.Default.Stars,
                 title = "Premium Plans",
@@ -563,7 +606,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                 thickness = 0.5.dp
             )
 
-            // ── Legal Section (Expandable) ──
+            
             DrawerExpandableItem(
                 icon = Icons.Default.Gavel,
                 title = "Legal",
@@ -572,7 +615,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                 onToggle = { isLegalExpanded = !isLegalExpanded }
             )
 
-            // Legal Sub-items (shown when expanded)
+            
             androidx.compose.animation.AnimatedVisibility(
                 visible = isLegalExpanded,
                 enter = androidx.compose.animation.expandVertically(),
@@ -599,7 +642,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
 
             Spacer(modifier = Modifier.weight(1f))
             
-            // ── Logout Section ──
+            
             if (userName != null) {
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 24.dp),
@@ -611,10 +654,15 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // Logout from Firebase
+                            
                             com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
                             
-                            // Navigate back to GoogleAuthActivity
+                            
+                            com.contactsaver.autocontactsaver.plan.UserManager.guestModeActive = false
+                            val prefs = context.getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+                            prefs.edit().putBoolean("guest_mode", false).apply()
+                            
+                            
                             val intent = android.content.Intent(
                                 context,
                                 com.contactsaver.autocontactsaver.auth.GoogleAuthActivity::class.java
@@ -623,7 +671,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                                          android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
                             context.startActivity(intent)
                             
-                            // Show toast
+                            
                             android.widget.Toast.makeText(
                                 context,
                                 "Logged out successfully",
@@ -633,7 +681,7 @@ private fun AppDrawerContent(onItemClick: (com.contactsaver.autocontactsaver.inf
                         .padding(horizontal = 24.dp, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Logout icon
+                    
                     Box(
                         modifier = Modifier
                             .size(44.dp)
@@ -693,7 +741,7 @@ private fun DrawerMenuItem(
             .padding(horizontal = 24.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon container
+        
         Box(
             modifier = Modifier
                 .size(44.dp)
@@ -742,7 +790,6 @@ private fun DrawerMenuItem(
     }
 }
 
-// ─── Expandable Drawer Item ──────────────────────────────────────
 @Composable
 private fun DrawerExpandableItem(
     icon: ImageVector,
@@ -758,7 +805,7 @@ private fun DrawerExpandableItem(
             .padding(horizontal = 24.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icon container
+        
         Box(
             modifier = Modifier
                 .size(44.dp)
@@ -798,7 +845,7 @@ private fun DrawerExpandableItem(
             )
         }
 
-        // Expand/Collapse icon
+        
         Icon(
             imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
             contentDescription = if (isExpanded) "Collapse" else "Expand",
@@ -808,7 +855,6 @@ private fun DrawerExpandableItem(
     }
 }
 
-// ─── Drawer Sub-Menu Item ────────────────────────────────────────
 @Composable
 private fun DrawerSubMenuItem(
     icon: ImageVector,
@@ -822,7 +868,7 @@ private fun DrawerSubMenuItem(
             .padding(horizontal = 40.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Smaller icon for sub-items
+        
         Icon(
             imageVector = icon,
             contentDescription = title,
@@ -849,11 +895,30 @@ private fun DrawerSubMenuItem(
     }
 }
 
-// ─── Main Screen ─────────────────────────────────────────────────
 @Composable
 private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {}) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     var showAccessibilityDialog by remember { mutableStateOf(false) }
+    var showHomeInfoDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            UserManager.syncUserPlanWithServer(context)
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                    UserManager.syncUserPlanWithServer(context)
+                }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
     
     val infiniteTransition = rememberInfiniteTransition(label = "bg")
     val bgAlpha by infiniteTransition.animateFloat(
@@ -866,7 +931,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
         label = "bgPulse"
     )
 
-    // Accessibility Permission Dialog
+    
     if (showAccessibilityDialog) {
         AccessibilityPermissionDialog(
             onAgree = {
@@ -876,6 +941,13 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
             onDecline = {
                 showAccessibilityDialog = false
             }
+        )
+    }
+
+    
+    if (showHomeInfoDialog) {
+        HomeStepByStepInfoDialog(
+            onDismiss = { showHomeInfoDialog = false }
         )
     }
 
@@ -895,7 +967,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                     )
                 )
         ) {
-            // Decorative top blob
+            
             Box(
                 modifier = Modifier
                     .size(200.dp)
@@ -920,7 +992,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
             ) {
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // ── Top Bar with Menu ──
+                
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier
@@ -944,6 +1016,27 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            
+                            IconButton(onClick = { showHomeInfoDialog = true }) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clip(CircleShape)
+                                        .background(PrimaryGreen.copy(alpha = 0.08f))
+                                        .border(1.dp, PrimaryGreen.copy(alpha = 0.2f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = "App Info",
+                                        tint = PrimaryGreen.copy(alpha = 0.55f),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                            
+                            Spacer(modifier = Modifier.width(14.dp))
+
                             IconButton(
                                 onClick = { showAccessibilityDialog = true },
                                 modifier = Modifier.size(44.dp)
@@ -975,7 +1068,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                             IconButton(
                                 onClick = {
                                     context.startActivity(
-                                        com.contactsaver.autocontactsaver.web.TutorialWebViewActivity.createIntent(context)
+                                        com.contactsaver.autocontactsaver.web.TutorialActivity.createIntent(context)
                                     )
                                 },
                                 modifier = Modifier.size(44.dp)
@@ -992,7 +1085,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                     
                     Spacer(modifier = Modifier.height(12.dp))
                     
-                    // Border line with increased visibility
+                    
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 1.5.dp,
@@ -1003,7 +1096,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-                    // ── Hero Card: Instant Save Mode ──
+                    
                     HeroInstantSaveCard(onStartSavingClick = {
                         val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(
                             context,
@@ -1014,7 +1107,7 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    // ── Feature Grid ──
+                    
                     FeatureGrid(onScanClick = onScanClick, onGroupExtractorClick = {
                         val intent = com.contactsaver.autocontactsaver.accessibility.WhatsAppSelectorActivity.createIntent(
                             context,
@@ -1030,7 +1123,6 @@ private fun MainScreen(onMenuClick: () -> Unit = {}, onScanClick: () -> Unit = {
     }
 }
 
-// ─── Hero Card ───────────────────────────────────────────────────
 @Composable
 private fun HeroInstantSaveCard(onStartSavingClick: () -> Unit = {}) {
     val infiniteTransition = rememberInfiniteTransition(label = "hero")
@@ -1091,7 +1183,7 @@ private fun HeroInstantSaveCard(onStartSavingClick: () -> Unit = {}) {
                 )
                 .padding(20.dp)
         ) {
-            // Decorative lightning bolts in background
+            
             Icon(
                 imageVector = Icons.Default.FlashOn,
                 contentDescription = null,
@@ -1113,7 +1205,7 @@ private fun HeroInstantSaveCard(onStartSavingClick: () -> Unit = {}) {
                     .rotate(-boltRotation)
             )
 
-            // Decorative floating circles
+            
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -1141,7 +1233,7 @@ private fun HeroInstantSaveCard(onStartSavingClick: () -> Unit = {}) {
 
             Column {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // Green icon container
+                    
                     Box(
                         modifier = Modifier
                             .size(52.dp)
@@ -1182,7 +1274,7 @@ private fun HeroInstantSaveCard(onStartSavingClick: () -> Unit = {}) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Start Saving Button
+                
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(14.dp))
@@ -1222,7 +1314,6 @@ private fun HeroInstantSaveCard(onStartSavingClick: () -> Unit = {}) {
     }
 }
 
-// ─── Quick Action Chips ──────────────────────────────────────────
 @Composable
 private fun QuickActionChips() {
     Card(
@@ -1291,7 +1382,6 @@ private fun ChipDivider() {
     )
 }
 
-// ─── Feature Grid ────────────────────────────────────────────────
 @Composable
 private fun AnimatedHeaderIcon(
     drawableRes: Int,
@@ -1373,7 +1463,7 @@ private fun FeatureGrid(onScanClick: () -> Unit = {}, onGroupExtractorClick: () 
                         }
                     )
                 }
-                // Add empty space if odd number of items in row
+                
                 if (row.size < 2) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
@@ -1414,7 +1504,7 @@ private fun FeatureCardItem(feature: FeatureItem, modifier: Modifier = Modifier,
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Icon container
+            
             Box(
                 modifier = Modifier
                     .size(48.dp)
@@ -1450,7 +1540,7 @@ private fun FeatureCardItem(feature: FeatureItem, modifier: Modifier = Modifier,
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            // Badge row
+            
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 feature.badges.forEach { badge ->
                     Box(
@@ -1468,9 +1558,6 @@ private fun FeatureCardItem(feature: FeatureItem, modifier: Modifier = Modifier,
     }
 }
 
-
-
-// ─── Accessibility Permission Dialog ─────────────────────────────
 @Composable
 private fun AccessibilityPermissionDialog(
     onAgree: () -> Unit,
@@ -1563,14 +1650,13 @@ private fun openAccessibilitySettings(context: Context) {
     context.startActivity(intent)
 }
 
-// ─── First Time User Dialog ─────────────────────────────────────
 @Composable
 private fun FirstTimeUserDialog(
     onAgree: () -> Unit,
     onDecline: () -> Unit
 ) {
     AlertDialog(
-        onDismissRequest = { /* Prevent dismiss on outside click */ },
+        onDismissRequest = {  },
         icon = {
             Icon(
                 imageVector = Icons.Default.Policy,
@@ -1600,7 +1686,7 @@ private fun FirstTimeUserDialog(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Privacy Policy Section
+                
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1638,7 +1724,7 @@ private fun FirstTimeUserDialog(
                     }
                 }
 
-                // Accessibility Permission Section
+                
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -1721,7 +1807,197 @@ private fun FirstTimeUserDialog(
     )
 }
 
-// ─── Theme ───────────────────────────────────────────────────────
+@Composable
+private fun HomeStepByStepInfoDialog(onDismiss: () -> Unit) {
+    val steps = listOf(
+        Pair("💬 Chat Contact Saver", "Automatically reads and extracts phone numbers while you scroll through WhatsApp chats."),
+        Pair("👥 Group Extractor", "Extracts all unknown member phone numbers directly from any WhatsApp Group info page."),
+        Pair("📷 Image OCR Scanner", "Scans gallery photos or screenshots to detect and extract phone numbers automatically."),
+        Pair("📋 Number Preview & Export", "Lets you review extracted numbers, remove duplicates, and export to Contacts or Excel/VCF."),
+        Pair("⭐ Premium Plans", "Unlocks unlimited contact saving and removes trial limits.")
+    )
+
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(28.dp),
+            color = Color(0xFFF4EFF5), 
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(PrimaryGreen),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "i",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        text = "App Features Guide",
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF1C1B1F),
+                        lineHeight = 28.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Text(
+                    text = "Quick guide explaining all features on the Home Screen:",
+                    fontSize = 14.sp,
+                    color = Color(0xFF49454F),
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 20.sp
+                )
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    steps.forEachIndexed { index, (featureTitle, featureDesc) ->
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFEAF5EB)), 
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(14.dp),
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .size(28.dp)
+                                        .clip(CircleShape)
+                                        .background(PrimaryGreen),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "${index + 1}",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 14.sp
+                                    )
+                                }
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = featureTitle,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = DarkGreen
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = featureDesc,
+                                        fontSize = 12.5.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = Color(0xFF1B4D24),
+                                        lineHeight = 18.sp
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(
+                            text = "Got it",
+                            color = Color(0xFF1E88E5), 
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AppUpdateDialog(
+    onDismiss: () -> Unit,
+    onUpdateClick: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Stars,
+                    contentDescription = null,
+                    tint = PrimaryGreen,
+                    modifier = Modifier.size(28.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Update Available!",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = TextPrimary
+                )
+            }
+        },
+        text = {
+            Text(
+                text = "A new version of Auto Contact Saver is available! Please update to get the latest features and bug fixes.",
+                fontSize = 15.sp,
+                color = TextSecondary
+            )
+        },
+        confirmButton = {
+            androidx.compose.material3.Button(
+                onClick = onUpdateClick,
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = PrimaryGreen)
+            ) {
+                Text("Update Now", color = CardWhite, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Remind Me Later", color = TextMuted)
+            }
+        },
+        shape = RoundedCornerShape(16.dp),
+        containerColor = CardWhite
+    )
+}
+
 @Composable
 private fun AutoContactsSaverTheme(content: @Composable () -> Unit) {
     val colorScheme = androidx.compose.material3.lightColorScheme(

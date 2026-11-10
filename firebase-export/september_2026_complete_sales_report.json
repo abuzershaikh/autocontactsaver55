@@ -1,0 +1,756 @@
+{
+  "reportMetadata": {
+    "title": "Auto Contact Saver - September 2026 Sales & Revenue Analysis",
+    "period": "September 1, 2026 - September 26, 2026 (Month-to-Date)",
+    "generatedAt": "2026-09-26T03:38:19.369Z",
+    "dataSource": "Firebase Firestore + Firebase Auth Production Dataset",
+    "currency": "INR (₹)"
+  },
+  "executiveSummary": {
+    "totalOrders": 25,
+    "totalRevenueINR": 4975,
+    "averageRevenuePerUser": 199,
+    "planBreakdown": {
+      "MONTHLY": {
+        "totalOrders": 25,
+        "pricePerPlanINR": 199,
+        "subtotalINR": 4975
+      },
+      "YEARLY": {
+        "totalOrders": 0,
+        "pricePerPlanINR": 999,
+        "subtotalINR": 0
+      },
+      "LIFETIME": {
+        "totalOrders": 0,
+        "pricePerPlanINR": 1999,
+        "subtotalINR": 0
+      }
+    }
+  },
+  "dailySalesBreakdown": {
+    "2026-09-01": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 1,
+          "name": "Miguel Angel",
+          "email": "N/A",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-02": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 2,
+          "name": "Nitish Mishra",
+          "email": "nitisheww@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-05": {
+      "ordersCount": 3,
+      "dailyRevenueINR": 597,
+      "customers": [
+        {
+          "orderNumber": 3,
+          "name": "Carmen Feliz",
+          "email": "carmenfeliz1818@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 4,
+          "name": "Islam Salhab",
+          "email": "islamsppu@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 5,
+          "name": "Pack",
+          "email": "404moverspackers@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-06": {
+      "ordersCount": 2,
+      "dailyRevenueINR": 398,
+      "customers": [
+        {
+          "orderNumber": 6,
+          "name": "Online Help",
+          "email": "onlinehelpind@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 7,
+          "name": "agizachap",
+          "email": "N/A",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-08": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 8,
+          "name": "Md afzal Ansari",
+          "email": "aaafzalansaii@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-10": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 9,
+          "name": "Exampuram P.K Sir",
+          "email": "anshgaming377@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-11": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 10,
+          "name": "padmasree",
+          "email": "padmasree.srirangam24@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-12": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 11,
+          "name": "Rahul Singh",
+          "email": "rahulsingh7248598@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-14": {
+      "ordersCount": 3,
+      "dailyRevenueINR": 597,
+      "customers": [
+        {
+          "orderNumber": 12,
+          "name": "App User",
+          "email": "N/A",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 13,
+          "name": "MR A.k.srivastav",
+          "email": "ashwanisrivstv@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 14,
+          "name": "Sahil Khan",
+          "email": "sahilusmani62@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-15": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 15,
+          "name": "miztajhay Business",
+          "email": "miztajhaybusiness@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-17": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 16,
+          "name": "Hanan Khan",
+          "email": "khan34213@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-18": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 17,
+          "name": "Ajaruddin Patel",
+          "email": "ajaruddin.patel87@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-20": {
+      "ordersCount": 1,
+      "dailyRevenueINR": 199,
+      "customers": [
+        {
+          "orderNumber": 18,
+          "name": "Radhey Mohan",
+          "email": "sakshiyadav3704006@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-21": {
+      "ordersCount": 2,
+      "dailyRevenueINR": 398,
+      "customers": [
+        {
+          "orderNumber": 19,
+          "name": "Sufi Xyz",
+          "email": "sufixyz965@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 20,
+          "name": "Jugal Baniya",
+          "email": "jugalbaniyabaniya55@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-23": {
+      "ordersCount": 3,
+      "dailyRevenueINR": 597,
+      "customers": [
+        {
+          "orderNumber": 21,
+          "name": "Jyothi Jose",
+          "email": "N/A",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 22,
+          "name": "Olayinka Atinuke",
+          "email": "atinukeolayinka3@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 23,
+          "name": "China Express",
+          "email": "pachosgrill2022@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-24": {
+      "ordersCount": 2,
+      "dailyRevenueINR": 398,
+      "customers": [
+        {
+          "orderNumber": 24,
+          "name": "Vishwadeep",
+          "email": "talktovishwadeep@gmail.com",
+          "phone": "N/A",
+          "amount": 199
+        },
+        {
+          "orderNumber": 25,
+          "name": "starplus overseaseducation",
+          "email": "N/A",
+          "phone": "N/A",
+          "amount": 199
+        }
+      ]
+    }
+  },
+  "customerOrders": [
+    {
+      "orderNumber": 1,
+      "userId": "usr_znk17oly",
+      "name": "Miguel Angel",
+      "email": "N/A",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 419,
+      "purchaseDateISO": "2026-09-01T03:35:03.693Z",
+      "purchaseDateIST": "1 Sept 2026, 9:05 am",
+      "purchaseDateOnly": "2026-09-01",
+      "expiryDateISO": "2026-10-01T03:35:03.693Z",
+      "expiryDateIST": "1 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 2,
+      "userId": "usr_11yror5k",
+      "name": "Nitish Mishra",
+      "email": "nitisheww@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 151,
+      "purchaseDateISO": "2026-09-02T14:01:33.867Z",
+      "purchaseDateIST": "2 Sept 2026, 7:31 pm",
+      "purchaseDateOnly": "2026-09-02",
+      "expiryDateISO": "2026-10-02T14:01:33.867Z",
+      "expiryDateIST": "2 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 3,
+      "userId": "usr_1k0px9hd",
+      "name": "Carmen Feliz",
+      "email": "carmenfeliz1818@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 391,
+      "purchaseDateISO": "2026-09-05T01:27:20.940Z",
+      "purchaseDateIST": "5 Sept 2026, 6:57 am",
+      "purchaseDateOnly": "2026-09-05",
+      "expiryDateISO": "2026-10-05T01:27:20.940Z",
+      "expiryDateIST": "5 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 4,
+      "userId": "usr_n8x6gm54",
+      "name": "Islam Salhab",
+      "email": "islamsppu@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 383,
+      "purchaseDateISO": "2026-09-05T03:03:24.340Z",
+      "purchaseDateIST": "5 Sept 2026, 8:33 am",
+      "purchaseDateOnly": "2026-09-05",
+      "expiryDateISO": "2026-10-05T03:03:24.340Z",
+      "expiryDateIST": "5 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 5,
+      "userId": "usr_a6zm7fj6",
+      "name": "Pack",
+      "email": "404moverspackers@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 272,
+      "purchaseDateISO": "2026-09-05T08:29:22.545Z",
+      "purchaseDateIST": "5 Sept 2026, 1:59 pm",
+      "purchaseDateOnly": "2026-09-05",
+      "expiryDateISO": "2026-10-05T08:29:22.545Z",
+      "expiryDateIST": "5 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 6,
+      "userId": "usr_nclcvmka",
+      "name": "Online Help",
+      "email": "onlinehelpind@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 410,
+      "purchaseDateISO": "2026-09-06T03:07:52.822Z",
+      "purchaseDateIST": "6 Sept 2026, 8:37 am",
+      "purchaseDateOnly": "2026-09-06",
+      "expiryDateISO": "2026-10-06T03:07:52.822Z",
+      "expiryDateIST": "6 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 7,
+      "userId": "usr_ov74poxo",
+      "name": "agizachap",
+      "email": "N/A",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 205,
+      "purchaseDateISO": "2026-09-06T07:19:55.602Z",
+      "purchaseDateIST": "6 Sept 2026, 12:49 pm",
+      "purchaseDateOnly": "2026-09-06",
+      "expiryDateISO": "2026-10-06T07:19:55.602Z",
+      "expiryDateIST": "6 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 8,
+      "userId": "usr_t46xuiya",
+      "name": "Md afzal Ansari",
+      "email": "aaafzalansaii@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 237,
+      "purchaseDateISO": "2026-09-08T19:39:49.954Z",
+      "purchaseDateIST": "9 Sept 2026, 1:09 am",
+      "purchaseDateOnly": "2026-09-08",
+      "expiryDateISO": "2026-10-08T19:39:49.954Z",
+      "expiryDateIST": "9 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 9,
+      "userId": "usr_2r9g2alp",
+      "name": "Exampuram P.K Sir",
+      "email": "anshgaming377@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 382,
+      "purchaseDateISO": "2026-09-10T00:13:19.927Z",
+      "purchaseDateIST": "10 Sept 2026, 5:43 am",
+      "purchaseDateOnly": "2026-09-10",
+      "expiryDateISO": "2026-10-10T00:13:19.927Z",
+      "expiryDateIST": "10 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 10,
+      "userId": "usr_j7j6kxck",
+      "name": "padmasree",
+      "email": "padmasree.srirangam24@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 226,
+      "purchaseDateISO": "2026-09-11T12:30:41.672Z",
+      "purchaseDateIST": "11 Sept 2026, 6:00 pm",
+      "purchaseDateOnly": "2026-09-11",
+      "expiryDateISO": "2026-10-11T12:30:41.672Z",
+      "expiryDateIST": "11 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 11,
+      "userId": "usr_n7t7ae6p",
+      "name": "Rahul Singh",
+      "email": "rahulsingh7248598@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 297,
+      "purchaseDateISO": "2026-09-12T06:18:25.122Z",
+      "purchaseDateIST": "12 Sept 2026, 11:48 am",
+      "purchaseDateOnly": "2026-09-12",
+      "expiryDateISO": "2026-10-12T06:18:25.122Z",
+      "expiryDateIST": "12 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 12,
+      "userId": "usr_ygs4q3oh",
+      "name": "App User",
+      "email": "N/A",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 472,
+      "purchaseDateISO": "2026-09-14T15:25:34.635Z",
+      "purchaseDateIST": "14 Sept 2026, 8:55 pm",
+      "purchaseDateOnly": "2026-09-14",
+      "expiryDateISO": "2026-10-14T15:25:34.635Z",
+      "expiryDateIST": "14 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 13,
+      "userId": "usr_wlhqzje7",
+      "name": "MR A.k.srivastav",
+      "email": "ashwanisrivstv@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 160,
+      "purchaseDateISO": "2026-09-14T15:58:36.072Z",
+      "purchaseDateIST": "14 Sept 2026, 9:28 pm",
+      "purchaseDateOnly": "2026-09-14",
+      "expiryDateISO": "2026-10-14T15:58:36.072Z",
+      "expiryDateIST": "14 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 14,
+      "userId": "usr_unx3kxzo",
+      "name": "Sahil Khan",
+      "email": "sahilusmani62@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 213,
+      "purchaseDateISO": "2026-09-14T16:30:26.157Z",
+      "purchaseDateIST": "14 Sept 2026, 10:00 pm",
+      "purchaseDateOnly": "2026-09-14",
+      "expiryDateISO": "2026-10-14T16:30:26.157Z",
+      "expiryDateIST": "14 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 15,
+      "userId": "usr_vou126xq",
+      "name": "miztajhay Business",
+      "email": "miztajhaybusiness@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 468,
+      "purchaseDateISO": "2026-09-15T11:36:41.338Z",
+      "purchaseDateIST": "15 Sept 2026, 5:06 pm",
+      "purchaseDateOnly": "2026-09-15",
+      "expiryDateISO": "2026-10-15T11:36:41.338Z",
+      "expiryDateIST": "15 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 16,
+      "userId": "usr_kpzujpvc",
+      "name": "Hanan Khan",
+      "email": "khan34213@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 477,
+      "purchaseDateISO": "2026-09-17T14:21:48.310Z",
+      "purchaseDateIST": "17 Sept 2026, 7:51 pm",
+      "purchaseDateOnly": "2026-09-17",
+      "expiryDateISO": "2026-10-17T14:21:48.310Z",
+      "expiryDateIST": "17 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 17,
+      "userId": "usr_rqq3zewx",
+      "name": "Ajaruddin Patel",
+      "email": "ajaruddin.patel87@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 420,
+      "purchaseDateISO": "2026-09-18T03:04:15.545Z",
+      "purchaseDateIST": "18 Sept 2026, 8:34 am",
+      "purchaseDateOnly": "2026-09-18",
+      "expiryDateISO": "2026-10-18T03:04:15.545Z",
+      "expiryDateIST": "18 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 18,
+      "userId": "usr_up23cxol",
+      "name": "Radhey Mohan",
+      "email": "sakshiyadav3704006@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 312,
+      "purchaseDateISO": "2026-09-20T05:56:49.871Z",
+      "purchaseDateIST": "20 Sept 2026, 11:26 am",
+      "purchaseDateOnly": "2026-09-20",
+      "expiryDateISO": "2026-10-20T05:56:49.871Z",
+      "expiryDateIST": "20 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 19,
+      "userId": "usr_55merey3",
+      "name": "Sufi Xyz",
+      "email": "sufixyz965@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 431,
+      "purchaseDateISO": "2026-09-21T07:28:09.109Z",
+      "purchaseDateIST": "21 Sept 2026, 12:58 pm",
+      "purchaseDateOnly": "2026-09-21",
+      "expiryDateISO": "2026-10-21T07:28:09.109Z",
+      "expiryDateIST": "21 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 20,
+      "userId": "usr_glwghcz2",
+      "name": "Jugal Baniya",
+      "email": "jugalbaniyabaniya55@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 466,
+      "purchaseDateISO": "2026-09-21T16:03:05.151Z",
+      "purchaseDateIST": "21 Sept 2026, 9:33 pm",
+      "purchaseDateOnly": "2026-09-21",
+      "expiryDateISO": "2026-10-21T16:03:05.151Z",
+      "expiryDateIST": "21 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 21,
+      "userId": "usr_b8tv59hw",
+      "name": "Jyothi Jose",
+      "email": "N/A",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 233,
+      "purchaseDateISO": "2026-09-23T07:22:46.369Z",
+      "purchaseDateIST": "23 Sept 2026, 12:52 pm",
+      "purchaseDateOnly": "2026-09-23",
+      "expiryDateISO": "2026-10-23T07:22:46.369Z",
+      "expiryDateIST": "23 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 22,
+      "userId": "usr_1rvg8twn",
+      "name": "Olayinka Atinuke",
+      "email": "atinukeolayinka3@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 279,
+      "purchaseDateISO": "2026-09-23T15:17:51.697Z",
+      "purchaseDateIST": "23 Sept 2026, 8:47 pm",
+      "purchaseDateOnly": "2026-09-23",
+      "expiryDateISO": "2026-10-23T15:17:51.697Z",
+      "expiryDateIST": "23 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 23,
+      "userId": "usr_nps8pqd3",
+      "name": "China Express",
+      "email": "pachosgrill2022@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 424,
+      "purchaseDateISO": "2026-09-23T16:39:35.859Z",
+      "purchaseDateIST": "23 Sept 2026, 10:09 pm",
+      "purchaseDateOnly": "2026-09-23",
+      "expiryDateISO": "2026-10-23T16:39:35.859Z",
+      "expiryDateIST": "23 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 24,
+      "userId": "usr_1hn8oxbz",
+      "name": "Vishwadeep",
+      "email": "talktovishwadeep@gmail.com",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 187,
+      "purchaseDateISO": "2026-09-24T04:17:57.800Z",
+      "purchaseDateIST": "24 Sept 2026, 9:47 am",
+      "purchaseDateOnly": "2026-09-24",
+      "expiryDateISO": "2026-10-24T04:17:57.800Z",
+      "expiryDateIST": "24 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    },
+    {
+      "orderNumber": 25,
+      "userId": "usr_1c7xhebi",
+      "name": "starplus overseaseducation",
+      "email": "N/A",
+      "mobileNumber": "N/A",
+      "planType": "MONTHLY",
+      "amountPaidINR": 199,
+      "status": "ACTIVE",
+      "contactsSaved": 256,
+      "purchaseDateISO": "2026-09-24T05:59:11.022Z",
+      "purchaseDateIST": "24 Sept 2026, 11:29 am",
+      "purchaseDateOnly": "2026-09-24",
+      "expiryDateISO": "2026-10-24T05:59:11.022Z",
+      "expiryDateIST": "24 Oct 2026",
+      "paymentProvider": "RAZORPAY",
+      "authProvider": "google.com"
+    }
+  ]
+}

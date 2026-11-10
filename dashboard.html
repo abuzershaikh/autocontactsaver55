@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Contact Saver - Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0B0F17;
+      --card-bg: #151C28;
+      --card-border: #232D3F;
+      --primary-green: #25D366;
+      --primary-green-glow: rgba(37, 211, 102, 0.25);
+      --text-main: #F1F5F9;
+      --text-sub: #94A3B8;
+      --accent-blue: #38BDF8;
+      --accent-red: #EF4444;
+      --accent-yellow: #F59E0B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 28px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px var(--primary-green-glow);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #FFFFFF, #94A3B8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 500;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary-green);
+    }
+
+    .stat-header {
+      font-size: 13px;
+      color: var(--text-sub);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-value.green { color: var(--primary-green); }
+    .stat-value.blue { color: var(--accent-blue); }
+    .stat-value.yellow { color: var(--accent-yellow); }
+
+    .table-container {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .table-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .table-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .search-input {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      color: white;
+      font-size: 14px;
+      width: 320px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-green);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      font-size: 12px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+    }
+
+    tr:hover td {
+      background-color: rgba(255,255,255,0.02);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-active { background: rgba(37, 211, 102, 0.15); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.3); }
+    .badge-trial { background: rgba(148, 163, 184, 0.15); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.3); }
+    .badge-deactivated { background: rgba(239, 68, 68, 0.15); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+
+    .btn-activate {
+      background-color: var(--primary-green);
+      color: black;
+      margin-left: 6px;
+    }
+
+    .btn-deactivate {
+      background-color: var(--accent-red);
+      color: white;
+    }
+
+    select.plan-select {
+      background-color: var(--bg-dark);
+      color: white;
+      border: 1px solid var(--card-border);
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .user-name { font-weight: 700; color: white; }
+    .user-email { font-size: 12px; color: var(--text-sub); }
+
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-sub);
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-bar">
+    <div class="brand">
+      <div class="brand-logo">📱</div>
+      <div>
+        <div class="brand-title">Auto Contact Saver Admin Panel</div>
+        <div class="brand-subtitle">Realtime Firestore User Directory & Plan Control</div>
+      </div>
+    </div>
+    <button class="btn btn-activate" onclick="loadUsers()">🔄 Refresh Data</button>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">Today Installs <span>📅</span></div>
+      <div class="stat-value green" id="statToday">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">Weekly Installs <span>📆</span></div>
+      <div class="stat-value blue" id="statWeekly">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">Monthly Installs <span>🗓️</span></div>
+      <div class="stat-value yellow" id="statMonthly">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">Premium Users <span>👑</span></div>
+      <div class="stat-value green" id="statPremium">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">Free / Trial Users <span>🆓</span></div>
+      <div class="stat-value" id="statTrial">0</div>
+    </div>
+  </div>
+
+  <div class="table-container" style="margin-bottom: 24px;">
+    <div class="table-title" style="margin-bottom: 16px;">App Settings & Version Control</div>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <div>
+        <label style="display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Latest App Version Code (e.g. 10)</label>
+        <input type="number" id="latestVersionInput" class="search-input" style="width: 200px;" placeholder="e.g. 10">
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Update Action</label>
+        <select id="updateActionInput" class="plan-select" style="width: 150px; padding: 10px 16px;">
+          <option value="SOFT_UPDATE">Soft Update (Show Dialog)</option>
+          <option value="NONE">No Action (Hide Dialog)</option>
+        </select>
+      </div>
+      <button class="btn btn-activate" style="margin-top: 24px; font-size: 14px;" onclick="saveAppSettings()">Save App Settings</button>
+    </div>
+  </div>
+
+  <div class="table-container" style="margin-bottom: 24px;">
+    <div class="table-title" style="margin-bottom: 16px;">YouTube Tutorials Management</div>
+    <div style="display: flex; gap: 16px; align-items: flex-end; margin-bottom: 16px;">
+      <div>
+        <label style="display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">YouTube URL</label>
+        <input type="text" id="tutUrlInput" class="search-input" style="width: 300px;" placeholder="https://youtu.be/... or https://youtube.com/watch?v=...">
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Language</label>
+        <select id="tutLangInput" class="plan-select" style="width: 120px; padding: 10px 16px;">
+          <option value="ENGLISH">English</option>
+          <option value="HINDI">Hindi</option>
+        </select>
+      </div>
+      <div>
+        <label style="display: block; font-size: 13px; color: var(--text-sub); margin-bottom: 8px;">Position</label>
+        <input type="number" id="tutPosInput" class="search-input" style="width: 80px;" placeholder="1">
+      </div>
+      <button class="btn btn-activate" style="padding: 10px 16px;" onclick="addTutorial()">Add Video</button>
+    </div>
+
+    <table id="tutorialsTable">
+      <thead>
+        <tr>
+          <th>Thumbnail</th>
+          <th>Video ID</th>
+          <th>Language</th>
+          <th>Position</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tutorialsTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-container">
+    <div class="table-header-row">
+      <div class="table-title">Registered Users Directory</div>
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by name, email, phone, status..." onkeyup="filterTable()">
+    </div>
+
+    <div id="loadingState" class="loader">Fetching registered users from Firestore...</div>
+
+    <table id="usersTable" style="display: none;">
+      <thead>
+        <tr>
+          <th>User Profile</th>
+          <th>Mobile Number</th>
+          <th>Registered Date</th>
+          <th>Current Plan</th>
+          <th>Status</th>
+          <th>Admin Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let allUsers = [];
+
+    async function loadUsers() {
+      document.getElementById('loadingState').style.display = 'block';
+      document.getElementById('usersTable').style.display = 'none';
+
+      try {
+        const resp = await fetch('/api/users');
+        const data = await resp.json();
+
+        if (data.success) {
+          allUsers = data.users || [];
+          calculateStats(allUsers);
+          renderTable(allUsers);
+        } else {
+          alert('Failed to fetch users: ' + (data.error || 'Unknown error'));
+        }
+      } catch (e) {
+        alert('Network error loading users: ' + e.message);
+      } finally {
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('usersTable').style.display = 'table';
+      }
+    }
+
+    function calculateStats(users) {
+      const now = new Date();
+      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const startOfWeek = now.getTime() - (7 * 24 * 60 * 60 * 1000);
+      const startOfMonth = now.getTime() - (30 * 24 * 60 * 60 * 1000);
+
+      let todayCount = 0;
+      let weeklyCount = 0;
+      let monthlyCount = 0;
+      let premiumCount = 0;
+      let trialCount = 0;
+
+      users.forEach(u => {
+        const regTime = u.createdAt || 0;
+        if (regTime >= startOfToday) todayCount++;
+        if (regTime >= startOfWeek) weeklyCount++;
+        if (regTime >= startOfMonth) monthlyCount++;
+
+        if (u.isActive) premiumCount++;
+        else trialCount++;
+      });
+
+      document.getElementById('statToday').innerText = todayCount;
+      document.getElementById('statWeekly').innerText = weeklyCount;
+      document.getElementById('statMonthly').innerText = monthlyCount;
+      document.getElementById('statPremium').innerText = premiumCount;
+      document.getElementById('statTrial').innerText = trialCount;
+    }
+
+    function renderTable(users) {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(u => {
+        const regDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A';
+        const isAct = u.isActive;
+
+        const badgeClass = isAct ? 'badge-active' : (u.status === 'DEACTIVATED' ? 'badge-deactivated' : 'badge-trial');
+        const statusText = isAct ? 'ACTIVE' : (u.status === 'DEACTIVATED' ? 'DEACTIVATED' : 'TRIAL');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="user-name">${escapeHtml(u.name)}</div>
+            <div class="user-email">${escapeHtml(u.email)}</div>
+          </td>
+          <td>${escapeHtml(u.fullPhone || u.mobileNumber || 'N/A')}</td>
+          <td>${regDate}</td>
+          <td><strong>${u.planType}</strong></td>
+          <td><span class="badge ${badgeClass}">${statusText}</span></td>
+          <td>
+            <select class="plan-select" id="select_${u.userId}">
+              <option value="MONTHLY">MONTHLY (₹199)</option>
+              <option value="YEARLY">YEARLY (₹999)</option>
+              <option value="LIFETIME">LIFETIME (₹1999)</option>
+            </select>
+            <button class="btn btn-activate" onclick="activatePlan('${u.userId}')">Activate</button>
+            <button class="btn btn-deactivate" onclick="deactivatePlan('${u.userId}')">Deactivate</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function activatePlan(userId) {
+      const planSelect = document.getElementById('select_' + userId);
+      const planId = planSelect ? planSelect.value : 'MONTHLY';
+
+      if (!confirm('Are you sure you want to activate ' + planId + ' for this user?')) return;
+
+      try {
+        const resp = await fetch('/api/activate-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, planId })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+          alert('Plan ' + planId + ' activated successfully!');
+          loadUsers();
+        } else {
+          alert('Activation failed: ' + (data.error || data.message));
+        }
+      } catch (e) {
+        alert('Error activating plan: ' + e.message);
+      }
+    }
+
+    async function deactivatePlan(userId) {
+      if (!confirm('Are you sure you want to DEACTIVATE this user plan? User will revert to TRIAL.')) return;
+
+      try {
+        const resp = await fetch('/api/deactivate-plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+          alert('Plan deactivated successfully!');
+          loadUsers();
+        } else {
+          alert('Deactivation failed: ' + (data.error || data.message));
+        }
+      } catch (e) {
+        alert('Error deactivating plan: ' + e.message);
+      }
+    }
+
+    function filterTable() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = allUsers.filter(u => 
+        (u.name && u.name.toLowerCase().includes(query)) ||
+        (u.email && u.email.toLowerCase().includes(query)) ||
+        (u.fullPhone && u.fullPhone.toLowerCase().includes(query)) ||
+        (u.planType && u.planType.toLowerCase().includes(query))
+      );
+      renderTable(filtered);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    async function loadAppSettings() {
+      try {
+        const resp = await fetch('/api/app-settings');
+        const data = await resp.json();
+        if (data.success) {
+          document.getElementById('latestVersionInput').value = data.latest_version || 0;
+          document.getElementById('updateActionInput').value = data.update_action || 'SOFT_UPDATE';
+        }
+      } catch (e) {
+        console.error('Error loading app settings:', e);
+      }
+    }
+
+    async function saveAppSettings() {
+      const val = document.getElementById('latestVersionInput').value;
+      const actionVal = document.getElementById('updateActionInput').value;
+      if (!val) return;
+      try {
+        const resp = await fetch('/api/app-settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            latest_version: parseInt(val),
+            update_action: actionVal
+          })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          alert('App Settings updated successfully!');
+        } else {
+          alert('Failed to update app settings: ' + data.error);
+        }
+      } catch (e) {
+        alert('Error saving app settings: ' + e.message);
+      }
+    }
+
+    let tutorialsList = [];
+
+    async function loadTutorials() {
+      try {
+        const resp = await fetch('/api/tutorials');
+        const data = await resp.json();
+        if (data.success) {
+          tutorialsList = data.tutorials || [];
+          renderTutorialsTable();
+        }
+      } catch (e) {
+        console.error('Error loading tutorials:', e);
+      }
+    }
+
+    function extractVideoId(url) {
+      const regExp = /^.*(youtu.be/|v/|u/w/|embed/|watch?v=|&v=)([^#&?]*).*/;
+      const match = url.match(regExp);
+      if (match && match[2].length === 11) {
+        return match[2];
+      }
+      return null;
+    }
+
+    function renderTutorialsTable() {
+      const tbody = document.getElementById('tutorialsTableBody');
+      tbody.innerHTML = '';
+      
+      // Sort by language then position
+      const sorted = [...tutorialsList].sort((a, b) => {
+        if (a.language !== b.language) return a.language.localeCompare(b.language);
+        return a.position - b.position;
+      });
+
+      sorted.forEach((tut, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="https://img.youtube.com/vi/${tut.videoId}/default.jpg" width="80" style="border-radius: 8px;"></td>
+          <td>${escapeHtml(tut.videoId)}<br><small style="color:var(--text-sub)">${escapeHtml(tut.url)}</small></td>
+          <td><span class="badge ${tut.language === 'HINDI' ? 'badge-trial' : 'badge-active'}">${escapeHtml(tut.language)}</span></td>
+          <td>${tut.position}</td>
+          <td>
+            <button class="btn btn-deactivate" onclick="removeTutorial('${tut.videoId}')">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function addTutorial() {
+      const url = document.getElementById('tutUrlInput').value.trim();
+      const language = document.getElementById('tutLangInput').value;
+      const positionStr = document.getElementById('tutPosInput').value;
+      const position = parseInt(positionStr) || 1;
+
+      if (!url) return alert('Please enter YouTube URL');
+      const videoId = extractVideoId(url);
+      if (!videoId) return alert('Invalid YouTube URL');
+
+      // Check if exists
+      if (tutorialsList.find(t => t.videoId === videoId && t.language === language)) {
+        return alert('This video already exists for this language');
+      }
+
+      tutorialsList.push({ videoId, url, language, position, title: "Tutorial" });
+      await saveTutorials();
+      
+      document.getElementById('tutUrlInput').value = '';
+      document.getElementById('tutPosInput').value = '';
+    }
+
+    async function removeTutorial(videoId) {
+      if (!confirm('Remove this tutorial?')) return;
+      tutorialsList = tutorialsList.filter(t => t.videoId !== videoId);
+      await saveTutorials();
+    }
+
+    async function saveTutorials() {
+      try {
+        const resp = await fetch('/api/tutorials', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tutorials: tutorialsList })
+        });
+        const data = await resp.json();
+        if (data.success) {
+          renderTutorialsTable();
+        } else {
+          alert('Failed to save tutorials: ' + data.error);
+        }
+      } catch (e) {
+        alert('Error saving tutorials: ' + e.message);
+      }
+    }
+
+    loadUsers();
+    loadAppSettings();
+    loadTutorials();
+  </script>
+</body>
+</html>

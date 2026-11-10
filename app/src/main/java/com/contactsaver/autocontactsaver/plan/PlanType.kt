@@ -1,8 +1,5 @@
 package com.contactsaver.autocontactsaver.plan
 
-/**
- * Enum representing different subscription plans
- */
 enum class PlanType(
     val planName: String,
     val price: String,

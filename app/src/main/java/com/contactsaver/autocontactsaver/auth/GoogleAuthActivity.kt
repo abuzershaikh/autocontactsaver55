@@ -16,6 +16,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ContactPhone
@@ -56,14 +58,67 @@ class GoogleAuthActivity : ComponentActivity() {
 
         credentialManager = CredentialManager.create(this)
 
-        if (com.google.firebase.auth.FirebaseAuth.getInstance().currentUser != null) {
+        val prefs = getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+        com.contactsaver.autocontactsaver.plan.UserManager.guestModeActive = prefs.getBoolean("guest_mode", false)
+
+        if (com.contactsaver.autocontactsaver.plan.UserManager.guestModeActive) {
             openMainAndFinish()
+            return
+        }
+
+        if (com.contactsaver.autocontactsaver.plan.UserManager.isUserSignedIn()) {
+            val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+            setContent {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color(0xFF43A047))
+                }
+            }
+            
+            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                var retries = 0
+                var success = false
+                var isProfileComplete = false
+                
+                while (retries < 3 && !success) {
+                    try {
+                        val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            com.contactsaver.autocontactsaver.plan.UserManager.initializeUser(
+                                userId = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserId() ?: "",
+                                email = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserEmail() ?: ""
+                            )
+                        }
+                        if (result.isSuccess) {
+                            success = true
+                            isProfileComplete = result.getOrNull()?.isProfileComplete == true
+                        } else {
+                            retries++
+                            kotlinx.coroutines.delay(1000)
+                        }
+                    } catch (e: Exception) {
+                        retries++
+                        kotlinx.coroutines.delay(1000)
+                    }
+                }
+                
+                if (success && isProfileComplete) {
+                    openMainAndFinish()
+                } else {
+                    UserProfileSetupActivity.start(this@GoogleAuthActivity)
+                    finish()
+                }
+            }
             return
         }
 
         setContent {
             GoogleAuthScreen(
-                onGoogleSignInClick = { handleGoogleSignIn() }
+                onGoogleSignInClick = { handleGoogleSignIn() },
+                onBypass = {
+                    com.contactsaver.autocontactsaver.plan.UserManager.guestModeActive = true
+                    val prefs = getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
+                    prefs.edit().putBoolean("guest_mode", true).apply()
+                    openMainAndFinish()
+                }
             )
         }
     }
@@ -97,32 +152,53 @@ class GoogleAuthActivity : ComponentActivity() {
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                 val idToken = googleIdTokenCredential.idToken
 
-                // Sign in to Firebase with the Google ID token
+                
                 val firebaseCredential = com.google.firebase.auth.GoogleAuthProvider.getCredential(idToken, null)
                 com.google.firebase.auth.FirebaseAuth.getInstance().signInWithCredential(firebaseCredential)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            // Successfully signed in to Firebase
                             val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
-                            
-                            // Initialize user in Firestore
                             if (currentUser != null) {
-                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
-                                    com.contactsaver.autocontactsaver.plan.UserManager.initializeUser(
-                                        userId = currentUser.uid,
-                                        email = currentUser.email ?: ""
-                                    )
+                                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                                    var retries = 0
+                                    var success = false
+                                    var isProfileComplete = false
+                                    
+                                    while (retries < 3 && !success) {
+                                        try {
+                                            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                                com.contactsaver.autocontactsaver.plan.UserManager.initializeUser(
+                                                    userId = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserId() ?: "",
+                                                    email = com.contactsaver.autocontactsaver.plan.UserManager.getCurrentUserEmail() ?: ""
+                                                )
+                                            }
+                                            if (result.isSuccess) {
+                                                success = true
+                                                isProfileComplete = result.getOrNull()?.isProfileComplete == true
+                                            } else {
+                                                retries++
+                                                kotlinx.coroutines.delay(1000)
+                                            }
+                                        } catch (e: Exception) {
+                                            retries++
+                                            kotlinx.coroutines.delay(1000)
+                                        }
+                                    }
+                                    
+                                    Toast.makeText(
+                                        this@GoogleAuthActivity,
+                                        "Welcome ${googleIdTokenCredential.displayName}!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    
+                                    if (success && isProfileComplete) {
+                                        openMainAndFinish()
+                                    } else {
+                                        UserProfileSetupActivity.start(this@GoogleAuthActivity)
+                                        finish()
+                                    }
                                 }
                             }
-                            
-                            Toast.makeText(
-                                this@GoogleAuthActivity,
-                                "Welcome ${googleIdTokenCredential.displayName}!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-
-                            // Navigate to MainActivity
-                            openMainAndFinish()
                         } else {
                             Toast.makeText(
                                 this@GoogleAuthActivity,
@@ -133,17 +209,25 @@ class GoogleAuthActivity : ComponentActivity() {
                     }
 
             } catch (e: GetCredentialException) {
-                Toast.makeText(
-                    this@GoogleAuthActivity,
-                    "Sign-in failed: ${e.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+                if (e.message?.contains("cancel", ignoreCase = true) == true) {
+                    android.util.Log.d("GoogleAuthActivity", "Google Sign-In sheet dismissed by user: ${e.message}")
+                } else {
+                    Toast.makeText(
+                        this@GoogleAuthActivity,
+                        "Sign-in failed: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             } catch (e: Exception) {
-                Toast.makeText(
-                    this@GoogleAuthActivity,
-                    "Error: ${e.message}",
-                    Toast.LENGTH_LONG
-                ).show()
+                if (e.message?.contains("cancel", ignoreCase = true) == true) {
+                    android.util.Log.d("GoogleAuthActivity", "Google Sign-In dismissed: ${e.message}")
+                } else {
+                    Toast.makeText(
+                        this@GoogleAuthActivity,
+                        "Error: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
@@ -156,7 +240,6 @@ class GoogleAuthActivity : ComponentActivity() {
     }
 }
 
-// ─── Theme Colors ────────────────────────────────────────────────
 private val BgGradientTop = Color(0xFFE8F5E9)
 private val BgGradientBottom = Color(0xFFF1F8E9)
 private val PrimaryGreen = Color(0xFF43A047)
@@ -167,7 +250,7 @@ private val TextPrimary = Color(0xFF1B1B1B)
 private val TextSecondary = Color(0xFF616161)
 
 @Composable
-fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit) {
+fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit, onBypass: () -> Unit) {
     val infiniteTransition = rememberInfiniteTransition(label = "bg")
     val bgAlpha by infiniteTransition.animateFloat(
         initialValue = 0.6f,
@@ -202,7 +285,7 @@ fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit) {
                 )
             )
     ) {
-        // Decorative elements
+        
         Box(
             modifier = Modifier
                 .size(250.dp)
@@ -237,13 +320,14 @@ fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit) {
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.weight(0.3f))
 
-            // App Logo/Icon (using actual app icon)
+            
             Box(
                 modifier = Modifier
                     .size(120.dp)
@@ -270,7 +354,7 @@ fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // App Title
+            
             Text(
                 text = "Auto Contact Saver",
                 fontSize = 32.sp,
@@ -291,7 +375,7 @@ fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit) {
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Features List
+            
             FeatureItem(text = "Extract contacts from messaging apps")
             Spacer(modifier = Modifier.height(12.dp))
             FeatureItem(text = "Scan images for phone numbers")
@@ -300,8 +384,13 @@ fun GoogleAuthScreen(onGoogleSignInClick: () -> Unit) {
 
             Spacer(modifier = Modifier.weight(0.5f))
 
-            // Google Sign-In Button
+            
             GoogleSignInButton(onClick = onGoogleSignInClick)
+
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            
+            GuestLoginSection(onBypass = onBypass)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -371,8 +460,8 @@ private fun GoogleSignInButton(onClick: () -> Unit) {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Google Logo (you'll need to add google_logo.png to drawable)
-            // For now using a placeholder
+            
+            
             Box(
                 modifier = Modifier
                     .size(24.dp)
@@ -387,6 +476,76 @@ private fun GoogleSignInButton(onClick: () -> Unit) {
                 fontWeight = FontWeight.SemiBold,
                 color = TextPrimary
             )
+        }
+    }
+}
+
+@Composable
+private fun GuestLoginSection(onBypass: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    val context = androidx.compose.ui.platform.LocalContext.current
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F5F9)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp, horizontal = 24.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Guest Login",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+            }
+        }
+        
+        if (expanded) {
+            Spacer(modifier = Modifier.height(12.dp))
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                singleLine = true
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    if (email.trim() == "guest8097@gmail.com" && password.trim() == "96199") {
+                        onBypass()
+                    } else {
+                        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                shape = RoundedCornerShape(12.dp),
+                border = androidx.compose.foundation.BorderStroke(1.dp, PrimaryGreen)
+            ) {
+                Text("Login", color = PrimaryGreen, modifier = Modifier.padding(vertical = 8.dp), fontWeight = FontWeight.Bold)
+            }
         }
     }
 }

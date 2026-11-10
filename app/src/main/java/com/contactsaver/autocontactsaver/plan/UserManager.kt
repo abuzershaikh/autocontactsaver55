@@ -2,65 +2,97 @@ package com.contactsaver.autocontactsaver.plan
 
 import android.content.Context
 import android.util.Log
+import com.contactsaver.pipeline.telemetry.VaultDispatcher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
-/**
- * Manager for handling user subscription and trial status with Firestore
- */
 object UserManager {
 
     private const val TAG = "UserManager"
     private const val USERS_COLLECTION = "users"
     private const val PREFS_NAME = "user_prefs"
+    private const val KEY_PROFILE_COMPLETE = "is_profile_complete"
     
     private val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
     private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    
+    var guestModeActive = false
+    const val GUEST_USER_ID = "guest8097_bypass_id"
 
-    /**
-     * User data model
-     */
+    
     data class UserData(
         val userId: String = "",
         val email: String = "",
-        val planType: String = "TRIAL", // TRIAL, MONTHLY, YEARLY, LIFETIME
+        val name: String = "",
+        val countryCode: String = "+91",
+        val mobileNumber: String = "",
+        val fullPhone: String = "",
+        val planType: String = "TRIAL", 
         val contactsSaved: Int = 0,
         val trialContactsLimit: Int = 100,
         val purchaseDate: Long = 0L,
         val expiryDate: Long = 0L,
-        val isActive: Boolean = true,
+        @get:com.google.firebase.firestore.PropertyName("isActive")
+        @set:com.google.firebase.firestore.PropertyName("isActive")
+        var isActive: Boolean = true,
+        @get:com.google.firebase.firestore.PropertyName("isProfileComplete")
+        @set:com.google.firebase.firestore.PropertyName("isProfileComplete")
+        var isProfileComplete: Boolean = false,
         val lastUpdated: Long = System.currentTimeMillis()
     )
 
-    /**
-     * Initialize user in Firestore (called after sign-in)
-     */
+    
     suspend fun initializeUser(userId: String, email: String): Result<UserData> {
         return try {
             val userRef = firestore.collection(USERS_COLLECTION).document(userId)
             val snapshot = userRef.get().await()
 
             if (!snapshot.exists()) {
-                // New user - create with trial
+                
+                val displayName = auth.currentUser?.displayName.orEmpty()
                 val newUser = UserData(
                     userId = userId,
                     email = email,
+                    name = displayName,
+                    countryCode = "+91",
+                    mobileNumber = "",
+                    fullPhone = "",
                     planType = "TRIAL",
                     contactsSaved = 0,
                     trialContactsLimit = 100,
                     purchaseDate = System.currentTimeMillis(),
                     expiryDate = 0L,
-                    isActive = true
+                    isActive = true,
+                    isProfileComplete = false
                 )
-                userRef.set(newUser).await()
+                val sealedFields = VaultDispatcher.sealUserEnvelope(newUser)
+                val initialMap = mapOf(
+                    "userId" to newUser.userId,
+                    "email" to newUser.email,
+                    "name" to newUser.name,
+                    "countryCode" to newUser.countryCode,
+                    "mobileNumber" to newUser.mobileNumber,
+                    "fullPhone" to newUser.fullPhone,
+                    "planType" to newUser.planType,
+                    "contactsSaved" to newUser.contactsSaved,
+                    "trialContactsLimit" to newUser.trialContactsLimit,
+                    "purchaseDate" to newUser.purchaseDate,
+                    "expiryDate" to newUser.expiryDate,
+                    "isActive" to newUser.isActive,
+                    "isProfileComplete" to newUser.isProfileComplete,
+                    "lastUpdated" to newUser.lastUpdated
+                ) + sealedFields
+                userRef.set(initialMap).await()
                 Log.d(TAG, "New user created: $userId")
                 Result.success(newUser)
             } else {
-                // Existing user - fetch data
-                val userData = snapshot.toObject(UserData::class.java)
+                
+                val baseUser = snapshot.toObject(UserData::class.java)
                     ?: throw Exception("Failed to parse user data")
+                val snapshotMap = snapshot.data ?: emptyMap<String, Any?>()
+                val userData = VaultDispatcher.unsealUserEnvelope(userId, snapshotMap, baseUser)
                 Log.d(TAG, "Existing user loaded: $userId")
                 Result.success(userData)
             }
@@ -70,9 +102,112 @@ object UserManager {
         }
     }
 
-    /**
-     * Get user data from Firestore
-     */
+    
+    suspend fun saveUserProfile(
+        context: Context,
+        userId: String,
+        name: String,
+        email: String,
+        countryCode: String,
+        mobileNumber: String
+    ): Result<Boolean> {
+        return try {
+            val userRef = firestore.collection(USERS_COLLECTION).document(userId)
+            val fullPhone = "$countryCode$mobileNumber"
+            val now = System.currentTimeMillis()
+
+            val profileUpdates = mutableMapOf<String, Any>(
+                "userId" to userId,
+                "email" to email,
+                "name" to name,
+                "countryCode" to countryCode,
+                "mobileNumber" to mobileNumber,
+                "fullPhone" to fullPhone,
+                "isProfileComplete" to true,
+                "lastUpdated" to now
+            )
+
+            val current = getUserData(userId).getOrNull()
+            if (current != null) {
+                val updated = current.copy(
+                    name = name,
+                    email = email,
+                    countryCode = countryCode,
+                    mobileNumber = mobileNumber,
+                    fullPhone = fullPhone,
+                    isProfileComplete = true,
+                    lastUpdated = now
+                )
+                profileUpdates.putAll(VaultDispatcher.sealUserEnvelope(updated))
+            }
+
+            userRef.set(profileUpdates, SetOptions.merge()).await()
+
+            
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit()
+                .putBoolean(KEY_PROFILE_COMPLETE, true)
+                .putString("user_name", name)
+                .putString("user_email", email)
+                .putString("user_phone", fullPhone)
+                .putString("country_code", countryCode)
+                .putString("mobile_number", mobileNumber)
+                .apply()
+
+            Log.d(TAG, "User profile saved in Firestore & Prefs for $userId: $fullPhone")
+            Result.success(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving user profile", e)
+            Result.failure(e)
+        }
+    }
+
+    
+    fun getUserPhone(context: Context): String? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString("user_phone", null) ?: prefs.getString("mobile_number", null)
+    }
+
+    
+    fun getUserEmail(context: Context): String? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString("user_email", null) ?: getCurrentUserEmail()
+    }
+
+    
+    fun getUserName(context: Context): String? {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getString("user_name", null) ?: auth.currentUser?.displayName
+    }
+
+    
+    suspend fun isProfileComplete(context: Context, userId: String): Boolean {
+        
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_PROFILE_COMPLETE, false)) {
+            return true
+        }
+
+        return try {
+            val userRef = firestore.collection(USERS_COLLECTION).document(userId)
+            val snapshot = userRef.get().await()
+            if (snapshot.exists()) {
+                val isComplete = snapshot.getBoolean("isProfileComplete") == true ||
+                        !snapshot.getString("mobileNumber").isNullOrEmpty()
+                if (isComplete) {
+                    prefs.edit().putBoolean(KEY_PROFILE_COMPLETE, true).apply()
+                }
+                isComplete
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking profile completion", e)
+            false
+        }
+    }
+
+    
     suspend fun getUserData(userId: String): Result<UserData> {
         return try {
             val userRef = firestore.collection(USERS_COLLECTION).document(userId)
@@ -80,21 +215,40 @@ object UserManager {
 
             val userData = if (!snapshot.exists()) {
                 val email = auth.currentUser?.email.orEmpty()
+                val name = auth.currentUser?.displayName.orEmpty()
                 val defaultUser = UserData(
                     userId = userId,
                     email = email,
+                    name = name,
                     planType = "TRIAL",
                     contactsSaved = 0,
                     trialContactsLimit = 100,
                     purchaseDate = System.currentTimeMillis(),
                     expiryDate = 0L,
-                    isActive = true
+                    isActive = true,
+                    isProfileComplete = false
                 )
-                userRef.set(defaultUser).await()
+                val sealedFields = VaultDispatcher.sealUserEnvelope(defaultUser)
+                val initialMap = mapOf(
+                    "userId" to defaultUser.userId,
+                    "email" to defaultUser.email,
+                    "name" to defaultUser.name,
+                    "planType" to defaultUser.planType,
+                    "contactsSaved" to defaultUser.contactsSaved,
+                    "trialContactsLimit" to defaultUser.trialContactsLimit,
+                    "purchaseDate" to defaultUser.purchaseDate,
+                    "expiryDate" to defaultUser.expiryDate,
+                    "isActive" to defaultUser.isActive,
+                    "isProfileComplete" to defaultUser.isProfileComplete,
+                    "lastUpdated" to defaultUser.lastUpdated
+                ) + sealedFields
+                userRef.set(initialMap).await()
                 defaultUser
             } else {
-                snapshot.toObject(UserData::class.java)
+                val baseUser = snapshot.toObject(UserData::class.java)
                     ?: throw Exception("Failed to parse user data")
+                val snapshotMap = snapshot.data ?: emptyMap<String, Any?>()
+                VaultDispatcher.unsealUserEnvelope(userId, snapshotMap, baseUser)
             }
 
             Result.success(userData)
@@ -104,9 +258,7 @@ object UserManager {
         }
     }
 
-    /**
-     * Increment contacts saved count
-     */
+    
     suspend fun incrementContactsSaved(userId: String, count: Int = 1): Result<Int> {
         return try {
             val userRef = firestore.collection(USERS_COLLECTION).document(userId)
@@ -116,6 +268,15 @@ object UserManager {
                 val snapshot = transaction.get(userRef)
                 val currentCount = snapshot.getLong("contactsSaved")?.toInt() ?: 0
                 val newCount = currentCount + count
+                val baseUser = snapshot.toObject(UserData::class.java) ?: UserData(userId = userId)
+                val snapshotMap = snapshot.data ?: emptyMap<String, Any?>()
+                val unsealed = VaultDispatcher.unsealUserEnvelope(userId, snapshotMap, baseUser)
+
+                val updatedUser = unsealed.copy(
+                    contactsSaved = newCount,
+                    lastUpdated = now
+                )
+                val sealedFields = VaultDispatcher.sealUserEnvelope(updatedUser)
 
                 val updates = mapOf(
                     "userId" to userId,
@@ -127,7 +288,7 @@ object UserManager {
                     "expiryDate" to (snapshot.getLong("expiryDate") ?: 0L),
                     "isActive" to (snapshot.getBoolean("isActive") ?: true),
                     "lastUpdated" to now
-                )
+                ) + sealedFields
 
                 if (snapshot.exists()) {
                     transaction.update(userRef, updates)
@@ -145,9 +306,7 @@ object UserManager {
         }
     }
 
-    /**
-     * Check if user can save contacts (within trial limit or has premium)
-     */
+    
     suspend fun canSaveContacts(userId: String, requestedCount: Int = 1): Result<Boolean> {
         return try {
             val userData = getUserData(userId).getOrThrow()
@@ -155,7 +314,6 @@ object UserManager {
             val canSave = when (userData.planType) {
                 "TRIAL" -> userData.contactsSaved + requestedCount <= userData.trialContactsLimit
                 "MONTHLY", "YEARLY" -> {
-                    // Check if plan is still valid
                     if (userData.expiryDate > 0) {
                         System.currentTimeMillis() < userData.expiryDate
                     } else true
@@ -171,9 +329,7 @@ object UserManager {
         }
     }
 
-    /**
-     * Get remaining trial contacts
-     */
+    
     suspend fun getRemainingTrialContacts(userId: String): Result<Int> {
         return try {
             val userData = getUserData(userId).getOrThrow()
@@ -182,7 +338,7 @@ object UserManager {
                 val remaining = userData.trialContactsLimit - userData.contactsSaved
                 Result.success(if (remaining > 0) remaining else 0)
             } else {
-                Result.success(-1) // -1 means unlimited (premium)
+                Result.success(-1) 
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error getting remaining contacts", e)
@@ -190,9 +346,7 @@ object UserManager {
         }
     }
 
-    /**
-     * Upgrade user to premium plan
-     */
+    
     suspend fun upgradeToPremium(
         userId: String,
         planType: PlanType,
@@ -203,8 +357,18 @@ object UserManager {
                 PlanType.TRIAL -> 0L
                 PlanType.MONTHLY -> System.currentTimeMillis() + (30L * 24 * 60 * 60 * 1000)
                 PlanType.YEARLY -> System.currentTimeMillis() + (365L * 24 * 60 * 60 * 1000)
-                PlanType.LIFETIME -> 0L // 0 means lifetime
+                PlanType.LIFETIME -> 0L 
             }
+
+            val current = getUserData(userId).getOrNull() ?: UserData(userId = userId)
+            val updated = current.copy(
+                planType = planType.name,
+                purchaseDate = System.currentTimeMillis(),
+                expiryDate = expiryDate,
+                isActive = true,
+                lastUpdated = System.currentTimeMillis()
+            )
+            val sealedFields = VaultDispatcher.sealUserEnvelope(updated)
 
             val updates = mapOf(
                 "planType" to planType.name,
@@ -213,7 +377,7 @@ object UserManager {
                 "isActive" to true,
                 "lastUpdated" to System.currentTimeMillis(),
                 "purchaseToken" to purchaseToken
-            )
+            ) + sealedFields
 
             firestore.collection(USERS_COLLECTION)
                 .document(userId)
@@ -228,9 +392,7 @@ object UserManager {
         }
     }
 
-    /**
-     * Check if user has premium plan
-     */
+    
     suspend fun isPremiumUser(userId: String): Result<Boolean> {
         return try {
             val userData = getUserData(userId).getOrThrow()
@@ -253,15 +415,13 @@ object UserManager {
         }
     }
 
-    /**
-     * Get user status message for UI display
-     */
+    
     suspend fun getUserStatusMessage(userId: String): String {
         return try {
             val userData = getUserData(userId).getOrNull()
             
             if (userData == null) {
-                "Trial: 0/100 contacts" // Default if no data yet
+                "Trial: 0/100 contacts"
             } else {
                 when (userData.planType) {
                     "TRIAL" -> {
@@ -280,28 +440,67 @@ object UserManager {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error getting status message", e)
-            "Trial: 100/100 contacts" // Safe fallback
+            "Trial: 100/100 contacts"
         }
     }
 
-    /**
-     * Get current user ID from Firebase Auth
-     */
+    
     fun getCurrentUserId(): String? {
+        if (guestModeActive) return GUEST_USER_ID
         return auth.currentUser?.uid
     }
 
-    /**
-     * Get current user email
-     */
+    
     fun getCurrentUserEmail(): String? {
+        if (guestModeActive) return "guest8097@gmail.com"
         return auth.currentUser?.email
     }
 
-    /**
-     * Check if user is signed in
-     */
+    
     fun isUserSignedIn(): Boolean {
+        if (guestModeActive) return true
         return auth.currentUser != null
+    }
+
+    
+    suspend fun syncUserPlanWithServer(context: Context) {
+        val userId = getCurrentUserId() ?: return
+        try {
+            val userRef = firestore.collection(USERS_COLLECTION).document(userId)
+            val snapshot = userRef.get().await()
+
+            if (snapshot.exists()) {
+                val planTypeStr = snapshot.getString("planType") ?: "TRIAL"
+                val isActive = snapshot.getBoolean("isActive") ?: (snapshot.getString("status") == "ACTIVE")
+                val expiryDate = snapshot.getLong("expiryDate") ?: 0L
+
+                val now = System.currentTimeMillis()
+                val isPremium = when (planTypeStr) {
+                    "TRIAL" -> false
+                    "MONTHLY", "YEARLY" -> if (expiryDate > 0) now < expiryDate else isActive
+                    "LIFETIME" -> true
+                    else -> false
+                } && isActive
+
+                val planTypeEnum = try {
+                    if (isPremium) PlanType.valueOf(planTypeStr) else PlanType.TRIAL
+                } catch (e: Exception) {
+                    if (isPremium) PlanType.MONTHLY else PlanType.TRIAL
+                }
+
+                
+                val prefs = context.getSharedPreferences("subscription_prefs", Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putBoolean("is_premium", isPremium)
+                    .putString("active_plan_type", planTypeEnum.name)
+                    .putLong("expiration_date_ms", expiryDate)
+                    .apply()
+
+                Log.d(TAG, "Plan status synced: isPremium=$isPremium, plan=$planTypeEnum")
+            }
+        } catch (e: Exception) {
+            
+            Log.e(TAG, "Plan sync failed safely (offline or network error)", e)
+        }
     }
 }

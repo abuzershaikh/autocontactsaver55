@@ -24,10 +24,25 @@ android {
         applicationId = "com.contactsaver.autocontactsaver"
         minSdk = 29
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.6"
+        versionCode = 12
+        versionName = "1.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                cppFlags += "-std=c++17"
+            }
+        }
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     signingConfigs {
@@ -59,6 +74,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -85,6 +101,10 @@ dependencies {
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
     
+    // Razorpay Payment Gateway SDK
+    implementation("com.razorpay:checkout:1.6.38")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    
     // Google Play Billing Library (In-App Purchase)
     implementation("com.android.billingclient:billing:7.0.0")
     
@@ -99,6 +119,9 @@ dependencies {
     
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.5.0")
+    
+    // YouTube Player
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.1")
     
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

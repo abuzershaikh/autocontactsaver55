@@ -1,0 +1,495 @@
+Created At: 2026-09-26T07:07:42+05:30
+Completed At: 2026-09-26T07:07:54+05:30
+
+The command exited with code 0.
+Output:
+<truncated 1 lines>
+  daysLeft: 18
+}
+{
+  name: 'Angel',
+  phone: '+526623701741',
+  plan: 'LIFETIME',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 0,
+  daysLeft: 'N/A'
+}
+{
+  name: 'miztajhay Business',
+  phone: '+233503548244',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792064201338,
+  daysLeft: 20
+}
+{
+  name: 'SBZ ENTERPRISES',
+  phone: '+919400051880',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788602593286,
+  daysLeft: -20
+}
+{
+  name: 'Exampuram P.K Sir',
+  phone: '+917857820867',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791591199927,
+  daysLeft: 14
+}
+{
+  name: 'China Express',
+  phone: '+584245759961',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792773575859,
+  daysLeft: 28
+}
+{
+  name: 'SHAIBU FESTUS',
+  phone: '+2347025333188',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1790001173300,
+  daysLeft: -4
+}
+{
+  name: 'Abuzer Shaikh',
+  phone: '',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1787833460951,
+  daysLeft: -29
+}
+{
+  name: 'Nitish Mishra',
+  phone: '+48729695413',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1790949693867,
+  daysLeft: 7
+}
+{
+  name: 'Carmen Feliz',
+  phone: '+1-8094609575',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791163640940,
+  daysLeft: 9
+}
+{
+  name: 'Sufi Xyz',
+  phone: '+919081524063',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792567689109,
+  daysLeft: 26
+}
+{
+  name: 'Anshul',
+  phone: '+916398034256',
+  plan: 'LIFETIME',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 0,
+  daysLeft: 'N/A'
+}
+{
+  name: 'Ayush Kumar',
+  phone: '+918542132162',
+  plan: 'LIFETIME',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 0,
+  daysLeft: 'N/A'
+}
+{
+  name: 'Suuq Haye',
+  phone: '+252634166673',
+  plan: 'YEARLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1819495240258,
+  daysLeft: 337
+}
+{
+  name: 'Morfi',
+  phone: '+59896654982',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788818654409,
+  daysLeft: -18
+}
+{
+  name: 'Rahul Singh',
+  phone: '+918858857851',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791785905122,
+  daysLeft: 17
+}
+{
+  name: 'Md afzal Ansari',
+  phone: '+918368297908',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791488389954,
+  daysLeft: 13
+}
+{
+  name: 'Online Help',
+  phone: '+917547061570',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791256072822,
+  daysLeft: 11
+}
+{
+  name: 'Olayinka Atinuke',
+  phone: '+2348167406818',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792768671697,
+  daysLeft: 28
+}
+{
+  name: 'shahbaz Khan',
+  phone: '+91938932259',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1790612715465,
+  daysLeft: 3
+}
+{
+  name: '36गढि world',
+  phone: '+918435393282',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788790271237,
+  daysLeft: -18
+}
+{
+  name: 'Jeeva',
+  phone: '+918438434800',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1789799995109,
+  daysLeft: -6
+}
+{
+  name: 'Islam Salhab',
+  phone: '+972598752732',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791169404340,
+  daysLeft: 10
+}
+{
+  name: 'Shreeji Education Bhiloda',
+  phone: '+918511828993',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788884609748,
+  daysLeft: -17
+}
+{
+  name: 'Sohil Vahora',
+  phone: '+919979086310',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788596142641,
+  daysLeft: -20
+}
+{
+  name: 'Vishwadeep',
+  phone: '+919821180784',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792815477800,
+  daysLeft: 29
+}
+{
+  name: 'Sahil Khan',
+  phone: '+919634361044',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1789279568586,
+  daysLeft: -12
+}
+{
+  name: 'Samba Tall',
+  phone: '+221784719114',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788950277193,
+  daysLeft: -16
+}
+{
+  name: 'Jugal Baniya',
+  phone: '+916268030473',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792598585151,
+  daysLeft: 26
+}
+{
+  name: 'Radhey Mohan',
+  phone: '+916388807876',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792475809871,
+  daysLeft: 25
+}
+{
+  name: 'MR A.k.srivastav',
+  phone: '+917838748580',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791993516072,
+  daysLeft: 19
+}
+{
+  name: 'Omshinenglow',
+  phone: '+9107884016111',
+  plan: 'LIFETIME',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 0,
+  daysLeft: 'N/A'
+}
+{
+  name: 'agizachap',
+  phone: '+255697889531',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791271195602,
+  daysLeft: 11
+}
+{
+  name: 'Nikhil Kumar',
+  phone: '+919616999075',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1790491242398,
+  daysLeft: 2
+}
+{
+  name: 'Hanan Khan',
+  phone: '+917006563327',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792246908310,
+  daysLeft: 22
+}
+{
+  name: 'padmasree',
+  phone: '+919493885225',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791721841672,
+  daysLeft: 16
+}
+{
+  name: 'Sahil Khan',
+  phone: '+919759575967',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791995426157,
+  daysLeft: 19
+}
+{
+  name: 'Ajaruddin Patel',
+  phone: '+918669084477',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792292655545,
+  daysLeft: 23
+}
+{
+  name: 'Mr Faisu',
+  phone: '+91993254662',
+  plan: 'YEARLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1819557332094,
+  daysLeft: 338
+}
+{
+  name: 'Will Car',
+  phone: '+595986563836',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788524847628,
+  daysLeft: -21
+}
+{
+  name: 'Cervical Spine Cure Centre Daijar Jodhpur',
+  phone: '+917727954348',
+  plan: 'LIFETIME',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 0,
+  daysLeft: 'N/A'
+}
+{
+  name: 'Gubio Audu',
+  phone: '+2347031314935',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1789294242502,
+  daysLeft: -12
+}
+{
+  name: 'Karan Verma',
+  phone: '+919770794206',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788589509108,
+  daysLeft: -20
+}
+{
+  name: 'starplus overseaseducation',
+  phone: '+919063791836',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792821551022,
+  daysLeft: 29
+}
+{
+  name: 'Surya Prakash',
+  phone: '+919984873014',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788577561523,
+  daysLeft: -20
+}
+{
+  name: 'Vamana Properties',
+  phone: '+919182159801',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1790100680509,
+  daysLeft: -3
+}
+{
+  name: 'Miguel Angel',
+  phone: '+51994579260',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1790825703693,
+  daysLeft: 6
+}
+{
+  name: 'Pack',
+  phone: '+919060512462',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791188962545,
+  daysLeft: 10
+}
+{
+  name: 'Jyothi Jose',
+  phone: '+916238974625',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1792740166369,
+  daysLeft: 28
+}
+{
+  name: 'Umang Patel',
+  phone: '+919898016221',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1790084069230,
+  daysLeft: -3
+}
+{
+  name: 'samuel isme',
+  phone: '+50938350749',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1789313247449,
+  daysLeft: -12
+}
+{
+  name: "Arthur's Pizzeria",
+  phone: '+94765855955',
+  plan: 'MONTHLY',
+  status: 'ACTIVE',
+  isActive: true,
+  expiry: 1791991534635,
+  daysLeft: 19
+}
+{
+  name: 'S Jain',
+  phone: '+919062185880',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1789159866819,
+  daysLeft: -14
+}
+{
+  name: 'TOPTAL TECH SERVICES',
+  phone: '+919500149581',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1788840693642,
+  daysLeft: -17
+}
+{
+  name: 'Phone Book',
+  phone: '+233207777165',
+  plan: 'MONTHLY',
+  status: 'EXPIRED',
+  isActive: true,
+  expiry: 1789471957069,
+  daysLeft: -10
+}
+

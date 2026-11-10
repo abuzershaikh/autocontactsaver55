@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
+import com.contactsaver.bridge.proxy.ProxyGatekeeper
 import com.contactsaver.autocontactsaver.preview.NumberPreviewActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ class ExtractionProcessingActivity : ComponentActivity() {
             launchedResult = true
 
             val numbers = withContext(Dispatchers.Default) {
-                WhatsAppAccessibilityService.instance?.consumeExtractedNumbers().orEmpty()
+                ProxyGatekeeper.flushAndHarvest()
             }
 
             if (numbers.isNotEmpty()) {

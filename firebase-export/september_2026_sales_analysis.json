@@ -1,0 +1,641 @@
+{
+  "reportTitle": "September 2026 Sales & Revenue Analysis",
+  "generatedAt": "2026-09-26T03:37:17.307Z",
+  "databaseSource": "Firebase Firestore / Auto Contact Saver Production DB",
+  "summary": {
+    "totalSalesCount": 25,
+    "totalRevenueINR": 4975,
+    "averageOrderValue": 199,
+    "plansBreakdown": {
+      "MONTHLY": {
+        "count": 25,
+        "pricePerUnit": 199,
+        "totalRevenue": 4975
+      },
+      "YEARLY": {
+        "count": 0,
+        "pricePerUnit": 999,
+        "totalRevenue": 0
+      },
+      "LIFETIME": {
+        "count": 0,
+        "pricePerUnit": 1999,
+        "totalRevenue": 0
+      }
+    }
+  },
+  "monthOverMonthComparison": {
+    "July 2026": {
+      "salesCount": 2,
+      "totalRevenue": 398
+    },
+    "August 2026": {
+      "salesCount": 55,
+      "totalRevenue": 27745
+    },
+    "September 2026 (Month-to-Date)": {
+      "salesCount": 25,
+      "totalRevenue": 4975
+    }
+  },
+  "septemberDailyBreakdown": {
+    "2026-09-01": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Miguel Angel",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-02": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Nitish Mishra",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-05": {
+      "count": 3,
+      "revenue": 597,
+      "customers": [
+        {
+          "name": "Carmen Feliz",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "Islam Salhab",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "Pack",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-06": {
+      "count": 2,
+      "revenue": 398,
+      "customers": [
+        {
+          "name": "Online Help",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "agizachap",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-08": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Md afzal Ansari",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-10": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Exampuram P.K Sir",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-11": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "padmasree",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-12": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Rahul Singh",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-14": {
+      "count": 3,
+      "revenue": 597,
+      "customers": [
+        {
+          "name": "App User",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "MR A.k.srivastav",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "Sahil Khan",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-15": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "miztajhay Business",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-17": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Hanan Khan",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-18": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Ajaruddin Patel",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-20": {
+      "count": 1,
+      "revenue": 199,
+      "customers": [
+        {
+          "name": "Radhey Mohan",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-21": {
+      "count": 2,
+      "revenue": 398,
+      "customers": [
+        {
+          "name": "Sufi Xyz",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "Jugal Baniya",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-23": {
+      "count": 3,
+      "revenue": 597,
+      "customers": [
+        {
+          "name": "Jyothi Jose",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "Olayinka Atinuke",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "China Express",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    },
+    "2026-09-24": {
+      "count": 2,
+      "revenue": 398,
+      "customers": [
+        {
+          "name": "Vishwadeep",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        },
+        {
+          "name": "starplus overseaseducation",
+          "phone": "N/A",
+          "plan": "MONTHLY",
+          "amount": 199
+        }
+      ]
+    }
+  },
+  "allSeptemberCustomers": [
+    {
+      "userId": "usr_znk17oly",
+      "name": "Miguel Angel",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788233703693,
+      "purchaseDate": "2026-09-01",
+      "purchaseDateIST": "1 Sept 2026, 9:05 am",
+      "expiryDate": "2026-10-01",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_11yror5k",
+      "name": "Nitish Mishra",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788357693867,
+      "purchaseDate": "2026-09-02",
+      "purchaseDateIST": "2 Sept 2026, 7:31 pm",
+      "expiryDate": "2026-10-02",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_1k0px9hd",
+      "name": "Carmen Feliz",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788571640940,
+      "purchaseDate": "2026-09-05",
+      "purchaseDateIST": "5 Sept 2026, 6:57 am",
+      "expiryDate": "2026-10-05",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_n8x6gm54",
+      "name": "Islam Salhab",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788577404340,
+      "purchaseDate": "2026-09-05",
+      "purchaseDateIST": "5 Sept 2026, 8:33 am",
+      "expiryDate": "2026-10-05",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_a6zm7fj6",
+      "name": "Pack",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788596962545,
+      "purchaseDate": "2026-09-05",
+      "purchaseDateIST": "5 Sept 2026, 1:59 pm",
+      "expiryDate": "2026-10-05",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_nclcvmka",
+      "name": "Online Help",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788664072822,
+      "purchaseDate": "2026-09-06",
+      "purchaseDateIST": "6 Sept 2026, 8:37 am",
+      "expiryDate": "2026-10-06",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_ov74poxo",
+      "name": "agizachap",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788679195602,
+      "purchaseDate": "2026-09-06",
+      "purchaseDateIST": "6 Sept 2026, 12:49 pm",
+      "expiryDate": "2026-10-06",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_t46xuiya",
+      "name": "Md afzal Ansari",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788896389954,
+      "purchaseDate": "2026-09-08",
+      "purchaseDateIST": "9 Sept 2026, 1:09 am",
+      "expiryDate": "2026-10-08",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_2r9g2alp",
+      "name": "Exampuram P.K Sir",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1788999199927,
+      "purchaseDate": "2026-09-10",
+      "purchaseDateIST": "10 Sept 2026, 5:43 am",
+      "expiryDate": "2026-10-10",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_j7j6kxck",
+      "name": "padmasree",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789129841672,
+      "purchaseDate": "2026-09-11",
+      "purchaseDateIST": "11 Sept 2026, 6:00 pm",
+      "expiryDate": "2026-10-11",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_n7t7ae6p",
+      "name": "Rahul Singh",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789193905122,
+      "purchaseDate": "2026-09-12",
+      "purchaseDateIST": "12 Sept 2026, 11:48 am",
+      "expiryDate": "2026-10-12",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_ygs4q3oh",
+      "name": "App User",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789399534635,
+      "purchaseDate": "2026-09-14",
+      "purchaseDateIST": "14 Sept 2026, 8:55 pm",
+      "expiryDate": "2026-10-14",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_wlhqzje7",
+      "name": "MR A.k.srivastav",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789401516072,
+      "purchaseDate": "2026-09-14",
+      "purchaseDateIST": "14 Sept 2026, 9:28 pm",
+      "expiryDate": "2026-10-14",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_unx3kxzo",
+      "name": "Sahil Khan",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789403426157,
+      "purchaseDate": "2026-09-14",
+      "purchaseDateIST": "14 Sept 2026, 10:00 pm",
+      "expiryDate": "2026-10-14",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_vou126xq",
+      "name": "miztajhay Business",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789472201338,
+      "purchaseDate": "2026-09-15",
+      "purchaseDateIST": "15 Sept 2026, 5:06 pm",
+      "expiryDate": "2026-10-15",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_kpzujpvc",
+      "name": "Hanan Khan",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789654908310,
+      "purchaseDate": "2026-09-17",
+      "purchaseDateIST": "17 Sept 2026, 7:51 pm",
+      "expiryDate": "2026-10-17",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_rqq3zewx",
+      "name": "Ajaruddin Patel",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789700655545,
+      "purchaseDate": "2026-09-18",
+      "purchaseDateIST": "18 Sept 2026, 8:34 am",
+      "expiryDate": "2026-10-18",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_up23cxol",
+      "name": "Radhey Mohan",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789883809871,
+      "purchaseDate": "2026-09-20",
+      "purchaseDateIST": "20 Sept 2026, 11:26 am",
+      "expiryDate": "2026-10-20",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_55merey3",
+      "name": "Sufi Xyz",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1789975689109,
+      "purchaseDate": "2026-09-21",
+      "purchaseDateIST": "21 Sept 2026, 12:58 pm",
+      "expiryDate": "2026-10-21",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_glwghcz2",
+      "name": "Jugal Baniya",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1790006585151,
+      "purchaseDate": "2026-09-21",
+      "purchaseDateIST": "21 Sept 2026, 9:33 pm",
+      "expiryDate": "2026-10-21",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_b8tv59hw",
+      "name": "Jyothi Jose",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1790148166369,
+      "purchaseDate": "2026-09-23",
+      "purchaseDateIST": "23 Sept 2026, 12:52 pm",
+      "expiryDate": "2026-10-23",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_1rvg8twn",
+      "name": "Olayinka Atinuke",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1790176671697,
+      "purchaseDate": "2026-09-23",
+      "purchaseDateIST": "23 Sept 2026, 8:47 pm",
+      "expiryDate": "2026-10-23",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_nps8pqd3",
+      "name": "China Express",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1790181575859,
+      "purchaseDate": "2026-09-23",
+      "purchaseDateIST": "23 Sept 2026, 10:09 pm",
+      "expiryDate": "2026-10-23",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_1hn8oxbz",
+      "name": "Vishwadeep",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1790223477800,
+      "purchaseDate": "2026-09-24",
+      "purchaseDateIST": "24 Sept 2026, 9:47 am",
+      "expiryDate": "2026-10-24",
+      "paymentProvider": "RAZORPAY"
+    },
+    {
+      "userId": "usr_1c7xhebi",
+      "name": "starplus overseaseducation",
+      "mobileNumber": "N/A",
+      "email": "N/A",
+      "planType": "MONTHLY",
+      "amountPaid": 199,
+      "status": "ACTIVE",
+      "purchaseDateTimestamp": 1790229551022,
+      "purchaseDate": "2026-09-24",
+      "purchaseDateIST": "24 Sept 2026, 11:29 am",
+      "expiryDate": "2026-10-24",
+      "paymentProvider": "RAZORPAY"
+    }
+  ]
+}
